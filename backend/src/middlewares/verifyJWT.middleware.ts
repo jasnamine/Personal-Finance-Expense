@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyAccesstoken } from "../utils/jwt";
+import { ForbiddenException } from "../utils/appError";
 
 const verifyJWT = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -9,18 +10,21 @@ const verifyJWT = async (req: Request, res: Response, next: NextFunction) => {
       typeof authHeader !== "string" ||
       !authHeader.startsWith("Bearer ")
     ) {
-      return res.sendStatus(401); 
+      throw new ForbiddenException("Access token is missing");
     }
 
     const token = authHeader.split(" ")[1];
-    const userId = await verifyAccesstoken(token);
-    if (!userId) {
-      return res.sendStatus(403);
+    let userId: string;
+    try {
+      userId = await verifyAccesstoken(token);
+    } catch {
+      throw new ForbiddenException("Invalid or expired access token");
     }
-    req.user = userId;
+
+    req.user = { id: userId };
     next();
   } catch (error) {
-    return res.sendStatus(403); 
+    next(error);
   }
 };
 

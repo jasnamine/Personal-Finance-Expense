@@ -1,9 +1,11 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import { config } from "./config/app.config";
 import connectDatabase from "./config/database.config";
 import { connectRedis } from "./config/redis.config";
+import { errorHandler } from "./middlewares/errorHandler.middeware";
 import setupRoutes from "./routes/index.route";
 
 const app = express();
@@ -18,13 +20,18 @@ app.use(
     credentials: true,
   }),
 );
+console.log("CORS configured for origin:", config.FRONTEND_ORIGIN);
+app.use(cookieParser());
 
 setupRoutes(app);
 
 app.use((req, res) => {
-  return res.send("404 not found");
+  return res.status(404).json({
+    message: "Route not found",
+  });
 });
 
+app.use(errorHandler);
 
 connectRedis();
 

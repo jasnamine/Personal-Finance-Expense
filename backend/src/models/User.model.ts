@@ -28,7 +28,7 @@ userSchema.pre('save', async function (next) {
 
 // Method compare password
 userSchema.methods.comparePassword = async function (password: string) {
-  await compareValue(password, this.password);
+  return await compareValue(password, this.password);
 }
 
 export default model<IUser>("User", userSchema);

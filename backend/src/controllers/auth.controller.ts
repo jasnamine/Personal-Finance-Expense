@@ -1,52 +1,79 @@
 import { Request, Response } from "express";
+import { asyncHandler } from "../middlewares/asyncHandler.middleware";
 import authService from "../services/auth.service";
+import { BadRequestException } from "../utils/appError";
 
-const register = async (req: Request, res: Response) => {
-  try {
-    const { email, password, username } = req.body;
-    const response = await authService.registerUser(email, password, username);
-    res.status(201).json(response);
-  } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
+const register = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password, username } = req.body;
+  const response = await authService.registerUser(email, password, username);
+  res.status(201).json(response);
+});
+
+const login = asyncHandler(async (req: Request, res: Response) => {
+  const oldRefreshToken = req.cookies?.refreshToken;
+  const { email, password } = req.body;
+  const response = await authService.loginUser(
+    email,
+    password,
+    oldRefreshToken,
+  );
+
+  if (oldRefreshToken) {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
   }
-};
 
-const login = async (req: Request, res: Response) => {
-  try {
-    const response = await authService.loginUser(req, res);
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(401).json({ error: (error as Error).message });
+  res.cookie("refreshToken", response.data.refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
+  res.status(200).json(response);
+});
+
+const handleRefreshToken = asyncHandler( async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    throw new BadRequestException("No refresh token provided");
   }
-};
 
-const handleRefreshToken = async (req: Request, res: Response) => {
-  try {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
+
+  const response = await authService.handleRefreshToken(req);
+
+  res.cookie("refreshToken", response.data.refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  res.status(200).json(response);
+});
+
+const logout = asyncHandler( async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
-      throw new Error("No refresh token provided");
+      throw new BadRequestException("No refresh token provided");
     }
 
-    const response = await authService.handleRefreshToken(req, res);
-    res.status(200).json(response);
-  } catch (error) {
-    throw error;
-  }
-};
+    const response = await authService.logout(req);
 
-const logout = async (req: Request, res: Response) => {
-  try {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
-      throw new Error("No refresh token provided");
-    }
-
-    const response = await authService.logout(req, res);
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
     res.status(200).json(response);
-  } catch (error) {
-    throw error;
-  }
-};
+});
 
 export default {
   register,

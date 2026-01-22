@@ -69,3 +69,23 @@ export class UnauthorizedException extends AppError {
     );
   }
 }
+
+export class NoContentException extends AppError {
+  constructor(message = "No Content", errorCode?: ErrorCodeEnumType) {
+    super(
+      message,
+      HTTPSTATUS.NO_CONTENT,
+      errorCode || ErrorCodeEnum.NO_CONTENT,
+    );
+  }
+} 
+
+export class ForbiddenException extends AppError {
+  constructor(message = "Forbidden Access", errorCode?: ErrorCodeEnumType) {
+    super(
+      message,
+      HTTPSTATUS.FORBIDDEN,
+      errorCode || ErrorCodeEnum.FORBIDDEN_ACCESS,
+    );
+  }
+}

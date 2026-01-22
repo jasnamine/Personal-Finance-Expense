@@ -1,96 +1,99 @@
 import Expense from "../models/Expense.model";
+import { NotFoundException, BadRequestException } from "../utils/appError";
 
-const findExpenses = async (userId: string, queryParams: any = {}) => {
-  try {
-    const { startDate, endDate, category, minAmount, maxAmount } = queryParams;
+export const findExpenses = async (userId: string, query: any) => {
+  const { startDate, endDate, category, minAmount, maxAmount } = query;
 
-    const filter: any = { user: userId, groupId: null };
-    if (startDate) filter.date = { $gte: new Date(startDate) };
-    if (endDate) filter.date = { ...filter.date, $lte: new Date(endDate) };
-    if (category) filter.categoryId = category;
-    if (minAmount !== undefined)
-      filter.amount = { ...filter.amount, $gte: minAmount };
-    if (maxAmount !== undefined)
-      filter.amount = { ...filter.amount, $lte: maxAmount };
-    return await Expense.find(filter)
-      .populate("categoryId", "name type icon")
-      .sort({ date: -1 });
-  } catch (error) {
-    throw error;
-  }
+  const filter: any = { createdBy: userId, groupId: null };
+
+  if (startDate) filter.date = { $gte: new Date(startDate) };
+  if (endDate) filter.date = { ...filter.date, $lte: new Date(endDate) };
+  if (category) filter.categoryId = category;
+
+  if (minAmount !== undefined)
+    filter.amount = { ...filter.amount, $gte: Number(minAmount) };
+
+  if (maxAmount !== undefined)
+    filter.amount = { ...filter.amount, $lte: Number(maxAmount) };
+
+  const expenses = await Expense.find(filter)
+    .populate("categoryId", "name type icon")
+    .sort({ date: -1 });
+
+  return {
+    message: "Expenses fetched successfully",
+    data: expenses,
+  };
 };
 
-const createExpense = async (userId: string, expenseData: any) => {
-  try {
-    const { amount, currency, date, description, type, categoryId } =
-      expenseData;
-    const expense = await Expense.create({
-      amount,
-      currency: currency || "VND",
-      date: new Date(date),
-      description,
-      type,
-      paidBy: userId,
-      createdBy: userId,
-      categoryId,
-      groupId: null, // personal mode
-    });
-    return expense;
-  } catch (error) {
-    throw error;
+export const createExpense = async (userId: string, body: any) => {
+  const { amount, currency, date, description, type, categoryId } = body;
+
+  if (!amount || !date || !type) {
+    throw new BadRequestException("Missing required fields");
   }
+
+  const expense = await Expense.create({
+    amount,
+    currency: currency || "VND",
+    date: new Date(date),
+    description,
+    type,
+    paidBy: userId,
+    createdBy: userId,
+    categoryId,
+    groupId: null,
+  });
+
+  return {
+    message: "Expense created successfully",
+    data: expense,
+  };
 };
 
-const updateExpense = async (
+export const updateExpense = async (
   userId: string,
   expenseId: string,
-  expenseData: any,
+  body: any,
 ) => {
-  try {
-    const existingExpense = await Expense.findOne({
-      _id: expenseId,
-      createdBy: userId,
-      groupId: null,
-    });
-    if (!existingExpense) {
-      throw new Error("Expense not found");
-    }
+  const expense = await Expense.findOne({
+    _id: expenseId,
+    createdBy: userId,
+    groupId: null,
+  });
 
-    const updatedExpense = await Expense.updateOne(
-      { _id: expenseId, createdBy: userId, groupId: null },
-      { $set: expenseData },
-    );
-    return updatedExpense;
-  } catch (error) {
-    throw error;
+  if (!expense) {
+    throw new NotFoundException("Expense not found");
   }
+
+  await Expense.updateOne(
+    { _id: expenseId, createdBy: userId, groupId: null },
+    { $set: body },
+  );
+
+  return {
+    message: "Expense updated successfully",
+  };
 };
 
-const deleteExpense = async (userId: string, expenseId: string) => {
-  try {
-    const existingExpense = await Expense.findOne({
-      _id: expenseId,
-      createdBy: userId,
-      groupId: null,
-    });
-    if (!existingExpense) {
-      throw new Error("Expense not found");
-    }
+export const deleteExpense = async (userId: string, expenseId: string) => {
+  const expense = await Expense.findOne({
+    _id: expenseId,
+    createdBy: userId,
+    groupId: null,
+  });
 
-    const deletedExpense = await Expense.deleteOne({
-      _id: expenseId,
-      createdBy: userId,
-      groupId: null,
-    });
-    return deletedExpense;
-  } catch (error) {
-    throw error;
+  if (!expense) {
+    throw new NotFoundException("Expense not found");
   }
-};
 
-export {
-  findExpenses,
-  createExpense,
-  updateExpense,
-  deleteExpense,
+  await Expense.deleteOne({
+    _id: expenseId,
+    createdBy: userId,
+    groupId: null,
+  });
+
+  return {
+    message: "Expense deleted successfully",
+  };
 };

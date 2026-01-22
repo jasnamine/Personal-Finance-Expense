@@ -17,6 +17,9 @@ export const ErrorCodeEnum = {
 
   // System Errors
   INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR",
+
+  FORBIDDEN_ACCESS: "FORBIDDEN_ACCESS",
+  NO_CONTENT: "NO_CONTENT",
 } as const;
 
 export type ErrorCodeEnumType = keyof typeof ErrorCodeEnum;
