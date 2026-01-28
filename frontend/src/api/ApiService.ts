@@ -1,0 +1,129 @@
+import type { AxiosInstance } from "axios";
+
+export interface RequestParams {
+  page?: number;
+  size?: number;
+  sort?: string;
+  filter?: string;
+  search?: string;
+  all?: number;
+}
+
+/**
+ * ListResponse dùng để thể hiện đối tượng trả về sau lệnh getAll
+ */
+export interface ListResponse<O = unknown> {
+  content: O[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
+/**
+ * ErrorMessage dùng để thể hiện đối tượng lỗi trả về sau lệnh fetch
+ */
+export interface ErrorMessage {
+  statusCode: number;
+  timestamp: string;
+  message: string;
+  description: string;
+}
+
+type BasicRequestParams = Record<string, string | number | null | boolean>;
+
+class ApiService {
+  private axios: AxiosInstance;
+  constructor(axios: AxiosInstance) {
+    this.axios = axios;
+  }
+
+  /**
+   * Hàm getAll dùng để lấy danh sách tất cả đối tượng (có thể theo một số tiêu chí, cài đặt trong requestParams)
+   * @param resourceUrl
+   * @param requestParams
+   */
+
+  async getAll<O>(
+    resourceURL: string,
+    params: BasicRequestParams,
+  ): Promise<ListResponse<O>> {
+    const response = await this.axios.get<ListResponse<O>>(
+      ApiService.concatParams(resourceURL, params),
+    );
+    return response.data;
+  }
+
+  /**
+   * Hàm getById dùng để lấy entity có id cho trước
+   * @param resourceUrl
+   * @param entityId
+   */
+  async getById<O>(resourceURL: string, id: string): Promise<O> {
+    const response = await this.axios.get<O>(`${resourceURL}/${id}`);
+    return response.data;
+  }
+
+  /**
+   * Hàm create dùng để tạo entity từ requestBody
+   * @param resourceUrl
+   * @param requestBody
+   */
+  async create<O>(resourceURL: string, data: O): Promise<O> {
+    const response = await this.axios.post<O>(resourceURL, data);
+    return response.data;
+  }
+
+  /**
+   * Hàm update dùng để cập nhật entity theo id và requestBody nhận được
+   * @param resourceUrl
+   * @param entityId
+   * @param requestBody
+   */
+  async update<I, O>(
+    resourceURL: string,
+    id: string,
+    requestBody: I,
+  ): Promise<O> {
+    const response = await this.axios.put<O>(
+      `${resourceURL}/${id}`,
+      requestBody,
+    );
+    return response.data;
+  }
+
+  /**
+   * Hàm deleteById xóa entity theo id nhận được
+   * @param resourceUrl
+   * @param entityId
+   */
+  async deleteById(resourceURL: string, id: string): Promise<void> {
+    await this.axios.delete(`${resourceURL}/${id}`);
+  }
+
+  /**
+   * Hàm concatParams dùng để nối url và requestParams
+   * @param url
+   * @param requestParams
+   */
+  private static concatParams = (
+    url: string,
+    requestParams?: BasicRequestParams,
+  ) => {
+    if (requestParams) {
+      const filteredRequestParams = Object.fromEntries(
+        Object.entries(requestParams).filter(
+          ([, v]) => v != null && String(v).trim() !== "",
+        ),
+      ) as Record<string, string>;
+      if (Object.keys(filteredRequestParams).length === 0) {
+        return url;
+      }
+      return url + "?" + new URLSearchParams(filteredRequestParams).toString();
+    }
+    return url;
+  };
+}
+
+export default ApiService;
