@@ -18,7 +18,7 @@ const navItems = [
   { to: "/profile", label: "Hồ sơ", icon: Settings },
 ];
 
-export default function AppSidebar() {
+const AppSidebar = () => {
   return (
     <aside className="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col">
       {/* Logo */}
@@ -49,3 +49,5 @@ export default function AppSidebar() {
     </aside>
   );
 }
+
+export default AppSidebar;

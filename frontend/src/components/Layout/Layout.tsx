@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
-export default function AppLayout() {
+const AppLayout = () => {
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-slate-950">
       <Sidebar />
@@ -16,3 +16,5 @@ export default function AppLayout() {
     </div>
   );
 }
+
+export default AppLayout;

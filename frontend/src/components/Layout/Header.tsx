@@ -1,7 +1,7 @@
 import { Bell, Moon, Search, Sun } from "lucide-react";
 import { useState } from "react";
 
-export default function Header() {
+const Header = () => {
   const [dark, setDark] = useState(false);
 
   const toggleDark = () => {
@@ -49,3 +49,5 @@ export default function Header() {
     </header>
   );
 }
+
+export default Header;

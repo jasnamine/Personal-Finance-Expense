@@ -1,7 +1,6 @@
 class ApplicationConstants {
-  static HOME_PATH = "http://localhost:5173";
-  static API_PATH = ApplicationConstants.HOME_PATH + "/api";
-  static CLIENT_API_PATH = ApplicationConstants.HOME_PATH + "/client-api";
+  static HOME_PATH = "http://localhost:5000";
+  static API_PATH = ApplicationConstants.HOME_PATH + "/api/v1";
   static WEBSOCKET_PATH = ApplicationConstants.HOME_PATH + "/ws";
 
   static DEFAULT_TAX = 0.1;

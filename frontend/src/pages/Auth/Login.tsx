@@ -1,13 +1,61 @@
-import { GoogleOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Card, Divider, Form, Typography } from "antd";
+import { GoogleOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Card, Divider, Typography } from "antd";
+import { Controller, useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router";
+import { z } from "zod";
+import { publicApi } from "../../api";
+import type { ErrorMessage } from "../../api/ApiService";
 import AppButton from "../../components/Button/AppButton";
 import AppInput from "../../components/Input/AppInput";
+import InputError from "../../components/Input/InputError";
+import ResourceURL from "../../constants/ResourceURL";
+import NotifyUtils from "../../lib/NotifyUtils";
+import type { LoginRequest, LoginResponse } from "../../models/Authetication";
+import {useAuthStore} from "../../stores/authStore"
 
 const { Title, Text } = Typography;
 
+const loginSchema = z.object({
+  email: z.string().email("Email không hợp lệ"),
+  password: z.string().min(6, "Tối thiểu 6 ký tự"),
+});
+
 const Login = () => {
-  const onFinish = (values: any) => {
-    console.log("Login data:", values);
+  const navigate = useNavigate();
+  const { setAuth } = useAuthStore();
+
+  const form = useForm<LoginRequest>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const loginMutation = useMutation<LoginResponse, ErrorMessage, LoginRequest>({
+    mutationFn: (data) => publicApi.post(ResourceURL.LOGIN, data),
+    onSuccess: (data) => {
+      setAuth({
+        user: data.user,
+        accessToken: data.accessToken,
+        isAuthenticated: true,
+      });
+      NotifyUtils.success("Đăng nhập thành công! Chuyển đến trang chủ...");
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    },
+    onError: (err: any) => {
+      NotifyUtils.error(
+        err.response.data.message || "Đăng nhập thất bại! Vui lòng thử lại.",
+      );
+    },
+  });
+
+  const onSubmit = (data: LoginRequest) => {
+    loginMutation.mutate(data);
   };
 
   return (
@@ -31,56 +79,52 @@ const Login = () => {
           Quản lý chi tiêu của bạn ngay hôm nay
         </Text>
 
-        <Form
-          layout="vertical"
-          onFinish={onFinish}
-          initialValues={{ remember: true }}
-          style={{ marginTop: 24 }}
-        >
-          <Form.Item
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-4">
+          <Controller
             name="email"
-            rules={[
-              { required: true, message: "Vui lòng nhập email" },
-              { type: "email", message: "Email không hợp lệ" },
-            ]}
-          >
-            <AppInput prefix={<UserOutlined />} placeholder="Email" />
-          </Form.Item>
-          <Form.Item
+            control={form.control}
+            render={({ field }) => (
+              <AppInput
+                type="email"
+                prefix={<MailOutlined />}
+                placeholder="Email"
+                {...field}
+              />
+            )}
+          />
+
+          <InputError error={form.formState.errors.email} />
+
+          <Controller
             name="password"
-            rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
-          >
-            <AppInput
-              type="password"
-              prefix={<LockOutlined />}
-              placeholder="Mật khẩu"
-            />
-          </Form.Item>
+            control={form.control}
+            render={({ field }) => (
+              <AppInput
+                type="password"
+                prefix={<LockOutlined />}
+                placeholder="Password"
+                {...field}
+              />
+            )}
+          />
+          <InputError error={form.formState.errors.password} />
+
           <AppButton type="primary" htmlType="submit" block>
             Đăng nhập
           </AppButton>
+
           <div style={{ textAlign: "center", marginTop: 16 }}>
-            {" "}
-            Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>{" "}
-          </div>{" "}
+            Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+          </div>
+
           <Divider plain style={{ color: "#8c8c8c", fontSize: "12px" }}>
             Hoặc đăng nhập với
-          </Divider>{" "}
-          <AppButton
-            icon={<GoogleOutlined />}
-            size="large"
-            block
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderColor: "#d9d9d9",
-            }}
-          >
-            {" "}
-            Tiếp tục với Google{" "}
+          </Divider>
+
+          <AppButton icon={<GoogleOutlined />} size="large" block>
+            Tiếp tục với Google
           </AppButton>
-        </Form>
+        </form>
       </Card>
     </div>
   );

@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Missing from "./pages/Errors/Missing";
 import NotFound from "./pages/Errors/NotFound";
 import Unauthorized from "./pages/Errors/Unauthorized";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
@@ -22,9 +23,11 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
 
-        <Route path="/" element={<AppLayout />}>
-          <Route index element={<Navigate to="/dashboard" />} />
-          <Route path="dashboard" element={<Dashboard />} />
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route path="/" element={<AppLayout />}>
+            <Route index element={<Navigate to="/dashboard" />} />
+            <Route path="dashboard" element={<Dashboard />} />
+          </Route>
         </Route>
 
         <Route path="/unauthorized" element={<Unauthorized />} />

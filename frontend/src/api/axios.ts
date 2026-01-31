@@ -1,15 +1,15 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/authStore";
 import { refreshToken } from "../lib/refreshtoken";
-const BASE_URL = "http://localhost:5000/api/v1";
+import ApplicationConstants from "../constants/ApplicationConstants";
 
 export const axiosPublic = axios.create({
-  baseURL: BASE_URL,
+  baseURL: ApplicationConstants.API_PATH,
   withCredentials: true,
 });
 
 export const axiosPrivate = axios.create({
-  baseURL: BASE_URL,
+  baseURL: ApplicationConstants.API_PATH,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });

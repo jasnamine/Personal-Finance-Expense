@@ -1,29 +1,80 @@
 import {
+  GoogleOutlined,
   LockOutlined,
   MailOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Card, Form, Typography } from "antd";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Card, Typography } from "antd";
+import { Controller, useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { publicApi } from "../../api";
+import type { ErrorMessage } from "../../api/ApiService";
 import AppButton from "../../components/Button/AppButton";
 import AppInput from "../../components/Input/AppInput";
+import InputError from "../../components/Input/InputError";
+import ResourceURL from "../../constants/ResourceURL";
+import NotifyUtils from "../../lib/NotifyUtils";
+import type {
+  RegisterRequest,
+  RegistrationResponse,
+} from "../../models/Authetication";
 
 const { Title, Text } = Typography;
 
+const registerSchema = z
+  .object({
+    username: z.string().min(6, "Tối thiểu 6 ký tự"),
+    email: z.string().email("Email không hợp lệ"),
+    password: z.string().min(6, "Tối thiểu 6 ký tự"),
+    confirmPassword: z.string().min(6, "Tối thiểu 6 ký tự"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirmPassword"],
+  });
+
 const Register = () => {
-  const onFinish = (values: any) => {
-    console.log("Register data:", values);
+  const navigate = useNavigate();
+
+  const form = useForm<RegisterRequest>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const registerMutation = useMutation<
+    RegistrationResponse,
+    ErrorMessage,
+    RegisterRequest
+  >({
+    mutationFn: (data) => publicApi.post(ResourceURL.REGISTER, data),
+    onSuccess: () => {
+      NotifyUtils.success("Đăng ký thành công!Chuyển đến trang đăng nhập...");
+      form.reset();
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    },
+    onError: (err: any) => {
+      NotifyUtils.error(
+        err.response.data.message || "Đăng ký thất bại. Vui lòng thử lại.",
+      );
+    },
+  });
+
+  const onSubmit = (data: RegisterRequest) => {
+    registerMutation.mutate(data);
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f0f2f5",
-      }}
-    >
+    <div className="min-h-screen flex justify-center items-center bg-gray-100">
       <Card style={{ width: 400 }}>
         <Title level={2} style={{ textAlign: "center" }}>
           Đăng Ký
@@ -35,81 +86,84 @@ const Register = () => {
           Tạo tài khoản mới miễn phí
         </Text>
 
-        <Form layout="vertical" onFinish={onFinish} style={{ marginTop: 24 }}>
-          {/* Username */}
-          <Form.Item
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-4">
+          <Controller
             name="username"
-            rules={[
-              { required: true, message: "Vui lòng nhập tên người dùng" },
-            ]}
-          >
-            <AppInput
-              prefix={<UserOutlined />}
-              placeholder="Tên người dùng"
-            />
-          </Form.Item>
+            control={form.control}
+            render={({ field }) => (
+              <AppInput
+                placeholder="Username"
+                {...field}
+                prefix={<UserOutlined />}
+              />
+            )}
+          />
 
-          {/* Email */}
-          <Form.Item
+          <InputError error={form.formState.errors.username} />
+          <Controller
             name="email"
-            rules={[
-              { required: true, message: "Vui lòng nhập email" },
-              { type: "email", message: "Email không hợp lệ" },
-            ]}
-          >
-            <AppInput
-              prefix={<MailOutlined />}
-              placeholder="Email"
-            />
-          </Form.Item>
+            control={form.control}
+            render={({ field }) => (
+              <AppInput
+                type="email"
+                prefix={<MailOutlined />}
+                placeholder="Email"
+                {...field}
+              />
+            )}
+          />
 
-          {/* Password */}
-          <Form.Item
+          <InputError error={form.formState.errors.email} />
+
+          <Controller
             name="password"
-            rules={[
-              { required: true, message: "Vui lòng nhập mật khẩu" },
-              { min: 6, message: "Mật khẩu tối thiểu 6 ký tự" },
-            ]}
-          >
-            <AppInput
-              type="password"
-              prefix={<LockOutlined />}
-              placeholder="Mật khẩu"
-            />
-          </Form.Item>
+            control={form.control}
+            render={({ field }) => (
+              <AppInput
+                type="password"
+                prefix={<LockOutlined />}
+                placeholder="Password"
+                {...field}
+              />
+            )}
+          />
+          <InputError error={form.formState.errors.password} />
 
-          {/* Submit */}
+          <Controller
+            name="confirmPassword"
+            control={form.control}
+            render={({ field }) => (
+              <AppInput
+                type="password"
+                prefix={<LockOutlined />}
+                placeholder="Confirm password"
+                {...field}
+              />
+            )}
+          />
+
+          <InputError error={form.formState.errors.confirmPassword} />
+
           <AppButton type="primary" htmlType="submit" block>
             Đăng ký
           </AppButton>
 
           {/* Link to login */}
           <div style={{ textAlign: "center", marginTop: 16 }}>
-            Đã có tài khoản? <a href="/login">Đăng nhập</a>
+            Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
           </div>
 
           {/* Google register */}
           <AppButton
-            icon={
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 48 48"
-                style={{ marginRight: 4 }}
-              >
-                <path
-                  fill="#FFC107"
-                  d="M43.6 20.1H42V20H24v8h11.3C33.7 32.1 29.2 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 6.1 28.9 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.2-.4-3.9z"
-                />
-              </svg>
-            }
+            icon={<GoogleOutlined />}
+            size="large"
             block
             centerContent
             style={{ marginTop: 12 }}
           >
-            Đăng ký với Google
+            Đăng nhập với Google
           </AppButton>
-        </Form>
+        </form>
       </Card>
     </div>
   );

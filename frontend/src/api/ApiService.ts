@@ -66,11 +66,11 @@ class ApiService {
   }
 
   /**
-   * Hàm create dùng để tạo entity từ requestBody
+   * Hàm post dùng để tạo entity từ requestBody
    * @param resourceUrl
    * @param requestBody
    */
-  async create<O>(resourceURL: string, data: O): Promise<O> {
+  async post<I,O>(resourceURL: string, data: I): Promise<O> {
     const response = await this.axios.post<O>(resourceURL, data);
     return response.data;
   }
