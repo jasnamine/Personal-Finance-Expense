@@ -14,6 +14,8 @@ import Missing from "./pages/Errors/Missing";
 import NotFound from "./pages/Errors/NotFound";
 import Unauthorized from "./pages/Errors/Unauthorized";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Category from "./pages/Category/Category";
+
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="category" element={<Category />} />
           </Route>
         </Route>
 

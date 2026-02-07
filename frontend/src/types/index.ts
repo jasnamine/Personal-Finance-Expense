@@ -15,8 +15,6 @@ export interface Category {
   name: string;
   type: TransactionType;
   icon: string;
-  userId: string;
-  color?: string;
 }
 
 export interface Group {

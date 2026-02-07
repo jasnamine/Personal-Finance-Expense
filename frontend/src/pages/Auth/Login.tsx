@@ -37,9 +37,10 @@ const Login = () => {
   const loginMutation = useMutation<LoginResponse, ErrorMessage, LoginRequest>({
     mutationFn: (data) => publicApi.post(ResourceURL.LOGIN, data),
     onSuccess: (data) => {
+      console.log(data)
       setAuth({
-        user: data.user,
-        accessToken: data.accessToken,
+        user: data.data,
+        accessToken: data.data.accessToken,
         isAuthenticated: true,
       });
       NotifyUtils.success("Đăng nhập thành công! Chuyển đến trang chủ...");

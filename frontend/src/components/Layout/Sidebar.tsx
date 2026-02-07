@@ -11,6 +11,7 @@ import { NavLink } from "react-router-dom";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/category", label: "Danh mục", icon: History },
   { to: "/transactions", label: "Lịch sử", icon: History },
   { to: "/income", label: "Thu nhập", icon: TrendingUp },
   { to: "/expense", label: "Chi tiêu", icon: TrendingDown },

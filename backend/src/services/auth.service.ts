@@ -68,9 +68,15 @@ const loginUser = async (
     EX: 60 * 60 * 24,
   });
 
+  let newUser = await User.findOne({ email });
+
   return {
     message: "User logged in successfully",
     data: {
+      id: newUser?.id,
+      username: newUser?.username,
+      email: newUser?.email,
+      currency: newUser?.currency,
       accessToken,
       refreshToken: newRefreshToken,
     },

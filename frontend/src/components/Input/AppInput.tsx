@@ -1,13 +1,12 @@
 import { Input } from "antd";
 import type { InputProps } from "antd";
-import type { PasswordProps } from "antd/es/input";
 import { forwardRef } from "react";
 
-type Props =
-  | ({ type?: "text" | "email" } & InputProps)
-  | ({ type: "password" } & PasswordProps);
+interface AppInputProps extends InputProps {
+  type?: "text" | "email" | "password";
+}
 
-const AppInput = forwardRef<any, Props>((props, ref) => {
+const AppInput = forwardRef<any, AppInputProps>((props, ref) => {
   if (props.type === "password") {
     const { type, ...rest } = props;
     return <Input.Password {...rest} ref={ref} size="large" />;

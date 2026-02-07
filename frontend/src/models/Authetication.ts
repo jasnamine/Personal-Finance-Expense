@@ -15,13 +15,13 @@ export interface RegistrationResponse {
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  user: {
+  data: {
     id: string;
     email: string;
     name: string;
     currency: string;
     createdAt: string;
+    accessToken: string;
   };
 }
 

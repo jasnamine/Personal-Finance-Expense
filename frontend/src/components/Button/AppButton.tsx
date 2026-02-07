@@ -1,5 +1,5 @@
-import { Button } from "antd";
 import type { ButtonProps } from "antd";
+import { Button } from "antd";
 
 type Props = ButtonProps & {
   centerContent?: boolean;
@@ -13,17 +13,8 @@ const AppButton = ({
 }: Props) => {
   return (
     <Button
-      size="large"
       {...rest}
       style={{
-        ...(centerContent
-          ? {
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-            }
-          : {}),
         ...style,
       }}
     >

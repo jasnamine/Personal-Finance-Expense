@@ -1,14 +1,14 @@
 import type { AxiosInstance } from "axios";
 
-export interface RequestParams {
+// Thay vì interface, hãy dùng type
+export type RequestParams = {
   page?: number;
   size?: number;
   sort?: string;
   filter?: string;
   search?: string;
   all?: number;
-}
-
+};
 /**
  * ListResponse dùng để thể hiện đối tượng trả về sau lệnh getAll
  */
@@ -47,7 +47,7 @@ class ApiService {
 
   async getAll<O>(
     resourceURL: string,
-    params: BasicRequestParams,
+    params?: BasicRequestParams,
   ): Promise<ListResponse<O>> {
     const response = await this.axios.get<ListResponse<O>>(
       ApiService.concatParams(resourceURL, params),
