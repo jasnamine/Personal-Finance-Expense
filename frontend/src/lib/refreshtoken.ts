@@ -3,12 +3,12 @@ import { useAuthStore } from "../stores/authStore";
 
 export const refreshToken = async (): Promise<string> => {
   const res = await axiosPublic.post(
-    "/auth/refresh",
+    "/auth/refresh-token",
     {},
     { withCredentials: true },
   );
 
-  const newToken = res.data.accessToken;
+  const newToken = res.data.data.accessToken;
 
   useAuthStore.getState().setAuth({
     accessToken: newToken,

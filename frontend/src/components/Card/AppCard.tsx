@@ -1,11 +1,12 @@
 import { Card } from "antd";
 import AppButton from "../Button/AppButton";
-interface AppCardProps{
-    onClick: () => void;
-    title: string;
+interface AppCardProps {
+  onClick: () => void;
+  title: string;
+  children: React.ReactElement;
 }
 
-const AppCard = ({ onClick, title }: AppCardProps) => {
+const AppCard = ({ onClick, title, children }: AppCardProps) => {
   return (
     <Card
       title={title}
@@ -15,7 +16,9 @@ const AppCard = ({ onClick, title }: AppCardProps) => {
           Thêm mới
         </AppButton>
       }
-    ></Card>
+    >
+      {children}
+    </Card>
   );
 };
 

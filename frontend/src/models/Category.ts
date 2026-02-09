@@ -7,9 +7,8 @@ export interface CategoryRequest {
 }
 
 export interface CategoryResponse {
-  userId: string;
-  categoryId: string;
+  _id: string;
   name: string;
-  icon?: string;
   type: TransactionType;
+  icon?: string;
 }

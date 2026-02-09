@@ -1,7 +1,10 @@
 import EmojiPicker from "emoji-picker-react";
-import { Image, XCircleIcon } from "lucide-react";
+import { Image } from "lucide-react";
 import { useState } from "react";
 import AppButton from "../Button/AppButton";
+import {
+CloseOutlined
+} from "@ant-design/icons";
 interface EmojiPickerPopupProps {
   icon: string;
   onSelected: (emoji: string) => void;
@@ -30,9 +33,9 @@ const EmojiPickerPopup = ({ icon, onSelected }: EmojiPickerPopupProps) => {
             onEmojiClick={(emoji) => onSelected(emoji?.imageUrl || "")}
           />
           <AppButton
-            className="absolute right-10 outline-none"
+            className="absolute right-6 outline-transparent"
             size="small"
-            icon={<XCircleIcon />}
+            icon={<CloseOutlined />}
             onClick={(e) => {
               e.stopPropagation();
               setIsModalOpen(false);

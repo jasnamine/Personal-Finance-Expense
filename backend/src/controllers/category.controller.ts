@@ -33,8 +33,12 @@ const createCategory = asyncHandler(async (req: Request, res: Response) => {
 
 const updateCategory = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
+  const categoryId = req.params.categoryId as string;
   if (!userId) {
     throw new BadRequestException("User ID is missing in request");
+  }
+  if (!categoryId) {
+    throw new BadRequestException("Category ID is missing in request");
   }
   const { name, type, icon } = req.body;
 
@@ -43,19 +47,24 @@ const updateCategory = asyncHandler(async (req: Request, res: Response) => {
     name,
     type,
     icon,
+    categoryId,
   );
   res.status(200).json(response);
 });
 
 const deleteCategory = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  const { name } = req.body;
+  const categoryId = req.params?.categoryId as string;
 
   if (!userId) {
     throw new BadRequestException("User ID is missing in request");
   }
 
-  const response = await categoryService.deleteCategory(userId, name);
+  if (!categoryId) {
+    throw new BadRequestException("Category ID is missing in request");
+  }
+
+  const response = await categoryService.deleteCategory(userId, categoryId);
   res.status(200).json(response);
 });
 

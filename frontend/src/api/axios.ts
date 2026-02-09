@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useAuthStore } from "../stores/authStore";
-import { refreshToken } from "../lib/refreshtoken";
 import ApplicationConstants from "../constants/ApplicationConstants";
+import { refreshToken } from "../lib/refreshtoken";
+import { useAuthStore } from "../stores/authStore";
 
 export const axiosPublic = axios.create({
   baseURL: ApplicationConstants.API_PATH,
@@ -33,6 +33,8 @@ axiosPrivate.interceptors.response.use(
       prev._retry = true;
 
       const newToken = await refreshToken();
+      // console.log(newToken)
+      // useAuthStore.getState().setAuth({ accessToken: newToken });
       prev.headers.Authorization = `Bearer ${newToken}`;
 
       return axiosPrivate(prev);

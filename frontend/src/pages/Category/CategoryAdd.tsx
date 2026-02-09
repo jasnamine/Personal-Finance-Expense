@@ -2,15 +2,16 @@ import { Col, Input, Radio, Row } from "antd";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import EmojiPickerPopup from "../../components/Picker/EmojiPickerPopup";
 import type { CategoryRequest } from "../../models/Category";
+import InputError from "../../components/Input/InputError";
 
 interface CategoryAddProps {
   form: UseFormReturn<CategoryRequest>;
-  onFinish: (values: CategoryRequest) => void;
+
 }
 
-const CategoryAdd = ({ form, onFinish }: CategoryAddProps) => {
+const CategoryAdd = ({ form }: CategoryAddProps) => {
   return (
-    <form onSubmit={form.handleSubmit(onFinish)}>
+    <form >
       <EmojiPickerPopup
         icon={form.watch("icon") || ""}
         onSelected={(selectedIcon) => form.setValue("icon", selectedIcon)}
@@ -24,6 +25,7 @@ const CategoryAdd = ({ form, onFinish }: CategoryAddProps) => {
           <Input {...field} placeholder="Tên danh mục" size="large" />
         )}
       />
+      <InputError error={form.formState.errors.name} />
 
       <label className="block mb-1 mt-2">Tên loại</label>
       <Controller
@@ -46,6 +48,7 @@ const CategoryAdd = ({ form, onFinish }: CategoryAddProps) => {
           </Radio.Group>
         )}
       />
+      <InputError error={form.formState.errors.type} />
     </form>
   );
 };

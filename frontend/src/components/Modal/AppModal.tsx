@@ -7,19 +7,26 @@ interface AppModalProps {
   onClose: () => void;
   children: React.ReactNode;
   title: string;
+  onSubmit: () => void;
 }
 
-const AppModal = ({ isOpen, onClose, children, title }: AppModalProps) => {
+const AppModal = ({ isOpen, onClose, children, title, onSubmit }: AppModalProps) => {
   return (
     <Modal
       title={<div className="pb-1 border-b">{title}</div>}
       open={isOpen}
       onCancel={onClose}
       footer={[
-        <Button size="large" onClick={onClose}>
+        <Button key="cancel" size="large" onClick={onClose}>
           Hủy
         </Button>,
-        <Button type="primary" htmlType="submit" size="large" icon={<Plus />}>
+        <Button
+          key="submit"
+          type="primary"
+          size="large"
+          icon={<Plus />}
+          onClick={onSubmit}
+        >
           {title}
         </Button>,
       ]}

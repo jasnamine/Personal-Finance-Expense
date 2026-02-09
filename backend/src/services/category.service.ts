@@ -3,7 +3,7 @@ import Category from "../models/Category.model";
 import { BadRequestException, NotFoundException } from "../utils/appError";
 
 const getAllCategories = async (userId: string) => {
-  const categories = await Category.find({ user: userId });
+  const categories = await Category.find({ userId });
   return {
     message: "Categories fetched successfully",
     data: categories,
@@ -21,7 +21,7 @@ const createCategory = async (
     throw new BadRequestException("Category with this name already exists");
   }
 
-  const newCategory = new Category({ user: userId, name, type, icon });
+  const newCategory = new Category({ userId, name, type, icon });
   await newCategory.save();
 
   return {
@@ -35,9 +35,10 @@ const updateCategory = async (
   name: string,
   type: TransactionType,
   icon: string,
+  categoryId: string,
 ) => {
   try {
-    const category = await Category.findOne({ user: userId, name });
+    const category = await Category.findOne({ userId, _id: categoryId });
     if (!category) {
       throw new NotFoundException("Category not found");
     }
@@ -51,17 +52,19 @@ const updateCategory = async (
       message: "Category updated successfully",
       data: category,
     };
-  } catch (error) {}
+  } catch (error) {
+    throw error;
+  }
 };
 
-const deleteCategory = async (userId: string, name: string) => {
+const deleteCategory = async (userId: string, categoryId: string) => {
   try {
-    const category = await Category.findOne({ user: userId, name });
+    const category = await Category.findOne({ userId, _id: categoryId });
     if (!category) {
       throw new NotFoundException("Category not found");
     }
 
-    await Category.deleteOne({ user: userId, name });
+    await Category.deleteOne({ userId, _id: categoryId });
 
     return {
       message: "Category deleted successfully",
@@ -71,4 +74,9 @@ const deleteCategory = async (userId: string, name: string) => {
   }
 };
 
-export default { createCategory, deleteCategory, getAllCategories, updateCategory };
+export default {
+  createCategory,
+  deleteCategory,
+  getAllCategories,
+  updateCategory,
+};

@@ -3,26 +3,25 @@ import { privateApi } from "../api";
 import type { ErrorMessage } from "../api/ApiService";
 import NotifyUtils from "../lib/NotifyUtils";
 
-const useDeleteByIdApi = <T = string>(
-  resourceURL: string,
-  resourceKey: string,
-  entityId: string,
-) => {
+const useDeleteByIdApi = (resourceURL: string, resourceKey: string) => {
   const queryClient = useQueryClient();
-  return useMutation<void, ErrorMessage, T>({
-    mutationFn: () => privateApi.deleteById(resourceURL, entityId),
+
+  return useMutation<void, ErrorMessage, string>({
+    mutationFn: (entityId: string) =>
+      privateApi.deleteById(resourceURL, entityId),
 
     onSuccess: () => {
-      NotifyUtils.success("Tạo thành công");
+      NotifyUtils.success("Xóa thành công");
       void queryClient.invalidateQueries({
         queryKey: [resourceKey, "getAll"],
       });
     },
 
     onError: (err) => {
-      NotifyUtils.error(err?.message || "Tạo không thành công");
+      NotifyUtils.error(err?.message || "Xóa không thành công");
     },
   });
 };
+
 
 export default useDeleteByIdApi;

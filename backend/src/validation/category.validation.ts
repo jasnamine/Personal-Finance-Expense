@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createCategorySchema = z.object({
   body: z.object({
     name: z.string().min(1, "Name is required"),
-    type: z.enum(["income", "expense"]),
+    type: z.enum(["INCOME", "EXPENSE"]),
     icon: z.string().min(1, "Icon is required"),
   }),
 });
@@ -14,7 +14,7 @@ export const updateCategorySchema = z.object({
   }),
   body: z.object({
     name: z.string().min(1),
-    type: z.enum(["income", "expense"]),
+    type: z.enum(["INCOME", "EXPENSE"]),
     icon: z.string().min(1),
   }),
 });
