@@ -6,10 +6,10 @@ export interface IExpense extends Document {
   currency: string;
   date: Date;
   description?: string;
-  type: TransactionType; // dùng enum type
-  paidBy: Types.ObjectId;
+  type: TransactionType; 
+  paidBy?: Types.ObjectId;
   categoryId?: Types.ObjectId;
-  createdBy: Types.ObjectId;
+  createdBy?: Types.ObjectId;
   groupId?: Types.ObjectId;
   splits?: Array<{
     userId: Types.ObjectId;
@@ -18,7 +18,7 @@ export interface IExpense extends Document {
     shares?: number;
   }>;
   receiptUrl?: string;
-  isSettled: boolean;
+  isSettled?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,9 +33,9 @@ const expenseSchema = new Schema<IExpense>({
     enum: Object.values(TRANSACTION_TYPE),
     required: true,
   },
-  paidBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  paidBy: { type: Schema.Types.ObjectId, ref: "User" },
   categoryId: { type: Schema.Types.ObjectId, ref: "Category" },
-  createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  createdBy: { type: Schema.Types.ObjectId, ref: "User"},
   groupId: { type: Schema.Types.ObjectId, ref: "Group" },
   splits: [
     {
@@ -55,3 +55,4 @@ expenseSchema.index({ userId: 1, groupId: 1, date: -1 });
 expenseSchema.index({ groupId: 1 });
 
 export default model<IExpense>("Expense", expenseSchema);
+

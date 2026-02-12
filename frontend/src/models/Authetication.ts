@@ -18,7 +18,7 @@ export interface LoginResponse {
   data: {
     id: string;
     email: string;
-    name: string;
+    username: string;
     currency: string;
     createdAt: string;
     accessToken: string;

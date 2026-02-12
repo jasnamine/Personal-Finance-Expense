@@ -1,18 +1,10 @@
 import { GROUP_ROLE } from "../enums/GroupRole.enum";
-import Group from "../models/Group.model";
+import Group, { IGroup } from "../models/Group.model";
 import GroupMember from "../models/GroupMember.model";
-import {
-  BadRequestException,
-  ForbiddenException,
-  NotFoundException,
-} from "../utils/appError";
+import { ForbiddenException, NotFoundException } from "../utils/appError";
 
-const createGroup = async (userId: string, groupData: any) => {
+const createGroup = async (userId: string, groupData: IGroup) => {
   const { name, description, startDate, endDate, baseCurrency } = groupData;
-
-  if (!name?.trim()) {
-    throw new BadRequestException("Group name is required");
-  }
 
   const group = await Group.create({
     name: name.trim(),
@@ -68,7 +60,7 @@ const getGroupById = async (userId: string, groupId: string) => {
 
   return {
     message: "Group fetched successfully",
-    data: member
+    data: member,
   };
 };
 
@@ -91,4 +83,4 @@ const deleteGroup = async (userId: string, groupId: string) => {
   };
 };
 
-export { createGroup, getUserGroups, getGroupById, deleteGroup };
+export { createGroup, deleteGroup, getGroupById, getUserGroups };

@@ -15,7 +15,9 @@ import NotFound from "./pages/Errors/NotFound";
 import Unauthorized from "./pages/Errors/Unauthorized";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Category from "./pages/Category/Category";
-
+import Income from "./pages/Income/Income";
+import Outcome from "./pages/Outcome/Outcome";
+import Group from "./pages/Group/Group";
 
 function App() {
   return (
@@ -30,6 +32,9 @@ function App() {
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="category" element={<Category />} />
+            <Route path="income" element={<Income />} />
+            <Route path="outcome" element={<Outcome />} />
+            <Route path="group" element={<Group />} />
           </Route>
         </Route>
 

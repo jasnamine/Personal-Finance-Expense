@@ -11,10 +11,9 @@ import useCreateApi from "../../hooks/use-create-api";
 import useGetAllApi from "../../hooks/use-get-all-api";
 import useUpdateApi from "../../hooks/use-update-api";
 import type { CategoryRequest, CategoryResponse } from "../../models/Category";
-import type { Category } from "../../types";
+import useDeleteByIdApi from "../../hooks/usde-delete-by-id-api";
 import CategoryAdd from "./CategoryAdd";
 import CategoryList from "./CategoryList";
-import useDeleteByIdApi from "../../hooks/usde-delete-by-id-api";
 export const categorySchema = z.object({
   name: z.string().min(1, "Vui lòng nhập tên danh mục!"),
   type: z.enum(["INCOME", "EXPENSE"], {
@@ -51,11 +50,11 @@ const Category = () => {
     CategoryResponse
   >(ResourceURL.CATEGORY, "categories");
 
-const deleteApi = useDeleteByIdApi(ResourceURL.CATEGORY, "categories");
+  const deleteApi = useDeleteByIdApi(ResourceURL.CATEGORY, "categories");
 
   const handleSubmit = (data: CategoryRequest) => {
     if (category) {
-      console.log(category)
+      console.log(category);
       updateApi.mutate({
         id: category._id,
         ...data,
@@ -83,7 +82,6 @@ const deleteApi = useDeleteByIdApi(ResourceURL.CATEGORY, "categories");
     }
   }, [category]);
 
-
   const handleEditCategory = (category: CategoryResponse) => {
     setIsModalOpen(true);
     setCategory(category);
@@ -96,7 +94,7 @@ const deleteApi = useDeleteByIdApi(ResourceURL.CATEGORY, "categories");
   return (
     <Content>
       <AppCard
-        title={"Thêm danh mục"}
+        title={"Danh mục"}
         onClick={() => {
           setCategory(undefined);
           form.reset({ name: "", type: "EXPENSE", icon: "" });

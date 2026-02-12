@@ -4,7 +4,7 @@ import { GROUP_ROLE, GroupRole } from "../enums/GroupRole.enum";
 export interface IGroupMember extends Document {
   groupId: Types.ObjectId;
   userId: Types.ObjectId;
-  role: GroupRole; // dùng enum type
+  role: GroupRole; 
   joinedAt: Date;
 }
 

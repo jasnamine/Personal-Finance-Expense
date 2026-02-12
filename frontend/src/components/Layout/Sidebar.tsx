@@ -1,54 +1,89 @@
 import {
-  History,
-  LayoutDashboard,
-  Settings,
-  TrendingDown,
-  TrendingUp,
-  Users,
-  Wallet,
-} from "lucide-react";
-import { NavLink } from "react-router-dom";
+  AppstoreOutlined,
+  LoginOutlined,
+  LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  TagsOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
+import { Button, Menu, Tooltip } from "antd";
+import Sider from "antd/es/layout/Sider";
+import { Wallet } from "lucide-react";
+import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 
-const navItems = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/category", label: "Danh mục", icon: History },
-  { to: "/transactions", label: "Lịch sử", icon: History },
-  { to: "/income", label: "Thu nhập", icon: TrendingUp },
-  { to: "/expense", label: "Chi tiêu", icon: TrendingDown },
-  { to: "/groups", label: "Nhóm", icon: Users },
-  { to: "/profile", label: "Hồ sơ", icon: Settings },
+const rawItems = [
+  {
+    key: "/dashboard",
+    icon: <AppstoreOutlined size={18} />,
+    label: "Dashboard",
+  },
+  { key: "/category", icon: <TagsOutlined size={18} />, label: "Danh mục" },
+  { key: "/group", icon: <TeamOutlined size={18} />, label: "Nhóm" },
+  { key: "/income", icon: <LoginOutlined size={18} />, label: "Thu nhập" },
+  { key: "/outcome", icon: <LogoutOutlined size={18} />, label: "Chi tiêu" },
 ];
 
 const AppSidebar = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
+
+  const items = rawItems.map((item) => ({
+    key: item.key,
+    icon: collapsed ? (
+      <Tooltip title={item.label} placement="right">
+        {item.icon}
+      </Tooltip>
+    ) : (
+      item.icon
+    ),
+    label: <NavLink to={item.key}>{item.label}</NavLink>,
+  }));
+
   return (
-    <aside className="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col">
+    <Sider
+      theme="light"
+      trigger={null}
+      collapsible
+      collapsed={collapsed}
+      width={240}
+      className="border-r border-gray-100 flex flex-col"
+    >
       {/* Logo */}
-      <div className="p-6 flex items-center gap-3">
-        <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white">
-          <Wallet />
+      <div className="flex items-center px-6 py-6 space-x-2 overflow-hidden">
+        <div className="w-8 h-8 bg-indigo-600 rounded-xl flex items-center p-1 justify-center text-white shadow">
+          <Wallet size={16} />
         </div>
-        <span className="text-xl font-extrabold">Retrofin</span>
+        {!collapsed && (
+          <span className="font-bold text-xl tracking-tight text-indigo-600 whitespace-nowrap">
+            Retrofin
+          </span>
+        )}
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 px-4 space-y-2">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            className={({ isActive }) =>
-              isActive
-                ? "bg-indigo-600 text-white flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition"
-                : "text-slate-500 hover:bg-slate-50 hover:text-indigo-600 flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition"
-            }
-          >
-            <item.icon size={22} />
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
-    </aside>
+      <Menu
+        mode="inline"
+        selectedKeys={[location.pathname]}
+        items={items}
+        className="border-none px-2 flex-1"
+        style={{
+          fontWeight: 500,
+        }}
+      />
+
+      {/* Toggle button */}
+      <div className="flex justify-center py-4 border-t">
+        <Button
+          type="text"
+          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          onClick={() => setCollapsed(!collapsed)}
+          className="text-lg w-10 h-10 flex items-center justify-center hover:bg-indigo-50 text-indigo-600"
+        />
+      </div>
+    </Sider>
   );
-}
+};
 
 export default AppSidebar;

@@ -1,3 +1,4 @@
+import { PlusOutlined } from "@ant-design/icons";
 import { Card } from "antd";
 import AppButton from "../Button/AppButton";
 interface AppCardProps {
@@ -12,7 +13,12 @@ const AppCard = ({ onClick, title, children }: AppCardProps) => {
       title={title}
       className="shadow-sm border-none"
       extra={
-        <AppButton type="primary" size="large" block onClick={onClick}>
+        <AppButton
+          icon={<PlusOutlined />}
+          type="primary"
+          block
+          onClick={onClick}
+        >
           Thêm mới
         </AppButton>
       }

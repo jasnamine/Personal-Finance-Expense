@@ -1,4 +1,3 @@
-// src/enums/GroupRole.ts
 export const GROUP_ROLE = {
   OWNER: "OWNER",
   EDITOR: "EDITOR",
@@ -6,4 +5,3 @@ export const GROUP_ROLE = {
 } as const;
 
 export type GroupRole = keyof typeof GROUP_ROLE;
-

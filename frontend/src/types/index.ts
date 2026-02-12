@@ -5,7 +5,7 @@ export type SplitMethod = "EQUAL" | "PERCENTAGE" | "EXACT" | "SHARES";
 export interface User {
   id: string;
   email: string;
-  name: string;
+  username: string;
   currency: string;
   createdAt: string;
 }
