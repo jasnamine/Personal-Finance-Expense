@@ -1,17 +1,16 @@
 import { Col, Input, Radio, Row } from "antd";
 import { Controller, type UseFormReturn } from "react-hook-form";
+import InputError from "../../components/Input/InputError";
 import EmojiPickerPopup from "../../components/Picker/EmojiPickerPopup";
 import type { CategoryRequest } from "../../models/Category";
-import InputError from "../../components/Input/InputError";
 
 interface CategoryAddProps {
   form: UseFormReturn<CategoryRequest>;
-
 }
 
 const CategoryAdd = ({ form }: CategoryAddProps) => {
   return (
-    <form >
+    <form>
       <EmojiPickerPopup
         icon={form.watch("icon") || ""}
         onSelected={(selectedIcon) => form.setValue("icon", selectedIcon)}

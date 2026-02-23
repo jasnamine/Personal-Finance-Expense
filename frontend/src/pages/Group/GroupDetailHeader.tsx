@@ -15,29 +15,30 @@ import {
   Typography,
 } from "antd";
 import dayjs from "dayjs";
-const group = {
-  _id: "g1",
-  name: "Du lịch Đà Nẵng 2026",
-  description: "Chuyến đi team building",
-  startDate: "20/02",
-  endDate: "23/02/2026",
-  members: ["Bạn", "Hoa", "Tuấn", "Linh"],
-  totalDebt: 500000,
-};
-const { Title, Text, Paragraph } = Typography;
-const GroupDetailHeader = () => {
+import { useState } from "react";
+import AppModal from "../../components/Modal/AppModal";
+import type { GroupDetailResponse } from "../../models/Group";
+import MemberForm from "./MemberForm";
+interface GroupDetailProps {
+  group: GroupDetailResponse;
+}
+const { Title, Paragraph } = Typography;
+const GroupDetailHeader = ({ group }: GroupDetailProps) => {
   const formatVND = (v: any) =>
     new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(v);
+
+  const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
+  const handleSubmit = () => {};
   return (
     <Card className="shadow-sm rounded-2xl border-none mb-6 overflow-hidden">
       <div className="flex flex-col md:flex-row justify-between gap-6">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-1">
             <Title level={2} style={{ margin: 0 }}>
-              {group.name}
+              {group.group.name}
             </Title>
             <Badge
               count={group.members?.length + " người"}
@@ -45,20 +46,24 @@ const GroupDetailHeader = () => {
             />
           </div>
           <Paragraph type="secondary" className="mb-4">
-            {group.description}
+            {group.group.description}
           </Paragraph>
           <div className="flex items-center gap-4 text-gray-500 text-sm">
             <div className="flex items-center gap-2">
               <CalendarOutlined className="text-blue-500" />
               <span>
-                {dayjs(group.startDate).format("DD/MM/YYYY")} -{" "}
-                {dayjs(group.endDate).format("DD/MM/YYYY")}
+                {dayjs(group.group.startDate).format("DD/MM/YYYY")} -{" "}
+                {dayjs(group.group.endDate).format("DD/MM/YYYY")}
               </span>
             </div>
           </div>
         </div>
         <div className="flex items-start">
-          <Button icon={<TeamOutlined />} className="rounded-lg h-10">
+          <Button
+            icon={<TeamOutlined />}
+            className="rounded-lg h-10"
+            onClick={() => setIsMemberModalOpen(true)}
+          >
             Quản lý thành viên
           </Button>
         </div>
@@ -79,7 +84,7 @@ const GroupDetailHeader = () => {
                   Tổng chi tiêu
                 </span>
               }
-              value={6000000}
+              value={group.totalExpense}
               formatter={formatVND}
               valueStyle={{
                 fontSize: "1.25rem",
@@ -121,7 +126,7 @@ const GroupDetailHeader = () => {
                   Giao dịch
                 </span>
               }
-              value={3}
+              value={group.expenses?.length || 0}
               valueStyle={{
                 fontSize: "1.25rem",
                 fontWeight: 700,
@@ -131,6 +136,15 @@ const GroupDetailHeader = () => {
           </div>
         </Col>
       </Row>
+
+      <AppModal
+        isOpen={isMemberModalOpen}
+        onClose={() => setIsMemberModalOpen(false)}
+        title="Quản lý thành viên"
+        onSubmit={handleSubmit}
+      >
+        <MemberForm members={group.members} />
+      </AppModal>
     </Card>
   );
 };

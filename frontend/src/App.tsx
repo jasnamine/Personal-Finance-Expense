@@ -9,15 +9,16 @@ import AppLayout from "./components/Layout/Layout";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import VerifyOtp from "./pages/Auth/VerifyOtp";
+import Category from "./pages/Category/Category";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Missing from "./pages/Errors/Missing";
 import NotFound from "./pages/Errors/NotFound";
 import Unauthorized from "./pages/Errors/Unauthorized";
-import ProtectedRoute from "./routes/ProtectedRoute";
-import Category from "./pages/Category/Category";
+import Group from "./pages/Group/Group";
+import GroupDetail from "./pages/Group/GroupDetail";
 import Income from "./pages/Income/Income";
 import Outcome from "./pages/Outcome/Outcome";
-import Group from "./pages/Group/Group";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="income" element={<Income />} />
             <Route path="outcome" element={<Outcome />} />
             <Route path="group" element={<Group />} />
+            <Route path="group/group-detail/:id" element={<GroupDetail />} />
           </Route>
         </Route>
 
