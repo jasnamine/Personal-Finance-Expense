@@ -9,6 +9,9 @@ class ResourceURL {
   static ADMIN_USER_INFO = apiPath + "/auth/info";
   static CATEGORY = apiPath + "/categories";
   static GROUP = apiPath + "/groups";
+  static GROUP_MEMBER = apiPath + "/group-members";
+  static EXPENSE_GROUP = apiPath + "/expense-groups";
+  static EXPENSE = apiPath + "/expenses";
 
   static CLIENT_REGISTRATION_RESEND_TOKEN = (userId: number) =>
     apiPath + `/auth/registration/${userId}/resend-token`;

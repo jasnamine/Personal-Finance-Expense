@@ -38,8 +38,6 @@ const getUserGroups = async (userId: string) => {
     })
     .lean();
 
-  console.log(userMemberships);
-
   // Lấy danh sách groupId để query members
   const groupIds = userMemberships.map((m) => m.groupId._id);
 
@@ -48,7 +46,6 @@ const getUserGroups = async (userId: string) => {
     .populate("userId", "name email")
     .lean();
 
-  console.log(allMembers);
   // Group members theo groupId
   const membersByGroup = allMembers.reduce(
     (acc: Record<string, any[]>, m: any) => {

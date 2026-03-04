@@ -22,6 +22,14 @@ export interface ListResponse<O = unknown> {
 }
 
 /**
+ * ListByIdResponse dùng để thể hiện đối tượng trả về sau lệnh getById
+ */
+export interface ListByIdResponse<O = unknown>{
+  data: O;
+  message: string;
+}
+
+/**
  * ErrorMessage dùng để thể hiện đối tượng lỗi trả về sau lệnh fetch
  */
 export interface ErrorMessage {
@@ -70,7 +78,7 @@ class ApiService {
    * @param resourceUrl
    * @param requestBody
    */
-  async post<I,O>(resourceURL: string, data: I): Promise<O> {
+  async post<I, O>(resourceURL: string, data: I): Promise<O> {
     const response = await this.axios.post<O>(resourceURL, data);
     return response.data;
   }
@@ -100,6 +108,10 @@ class ApiService {
    */
   async deleteById(resourceURL: string, id: string): Promise<void> {
     await this.axios.delete(`${resourceURL}/${id}`);
+  }
+
+  async delete<I>(resourceURL: string, id: string, requestBody?: I): Promise<void>{
+    await this.axios.delete(`${resourceURL}/${id}`, { data: requestBody });
   }
 
   /**

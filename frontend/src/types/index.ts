@@ -1,5 +1,5 @@
 export type TransactionType = "INCOME" | "EXPENSE";
-export type GroupRole = "ADMIN" | "EDITOR" | "VIEWER";
+export type GroupRole = "OWNER" | "EDITOR" | "VIEWER";
 export type SplitMethod = "EQUAL" | "PERCENTAGE" | "EXACT" | "SHARES";
 
 export interface User {

@@ -8,13 +8,11 @@ interface Props {
 }
 
 const BalanceTab = ({ members, currency }: Props) => {
-  // Sau này bạn sẽ tính balance từ expenses
   return (
     <Row gutter={[24, 24]}>
       <Col xs={24} md={12}>
         <MemberBalanceCard members={members} currency={currency} />
       </Col>
-
     </Row>
   );
 };

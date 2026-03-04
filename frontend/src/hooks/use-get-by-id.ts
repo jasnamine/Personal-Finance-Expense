@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import type { ErrorMessage } from "../api/ApiService";
 import { privateApi } from "../api";
+import type { ErrorMessage } from "../api/ApiService";
 
 const useGetById = <O>(
   resourceURL: string,

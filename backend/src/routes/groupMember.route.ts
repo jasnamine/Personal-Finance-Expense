@@ -5,8 +5,9 @@ import verifyJWT from "../middlewares/verifyJWT.middleware";
 const router = express.Router();
 
 router.use(verifyJWT);
-router.post("/member", groupMemberController.addMember);
-router.put("/member", groupMemberController.updateMemberRole);
-router.delete("/member", groupMemberController.deleteMember);
+router.get("/:groupId", groupMemberController.getMembersByGroupId);
+router.post("/", groupMemberController.addMember);
+router.put("/:groupId", groupMemberController.updateMemberRole);
+router.delete("/:groupId", groupMemberController.deleteMember);
 
 export default router;

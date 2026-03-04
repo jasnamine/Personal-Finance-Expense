@@ -1,44 +1,16 @@
-import { Empty, Skeleton, Tabs, Typography } from "antd";
+import { Empty, Skeleton, Tabs } from "antd";
 import { useParams } from "react-router-dom";
-import ResourceURL from "../../constants/ResourceURL";
-import useGetById from "../../hooks/use-get-by-id";
-import type { GroupDetailResponse } from "../../models/Group";
-import GroupDetailHeader from "./GroupDetailHeader";
 import BalanceTab from "../../components/Tabs/BalanceTab";
 import GroupExpensesTab from "../../components/Tabs/GroupExpensesTab";
-import MemberForm from "./MemberForm";
+import ResourceURL from "../../constants/ResourceURL";
+import useGetById from "../../hooks/use-get-by-id";
+import type {
+  GroupDetailResponse,
+  GroupMemberResponse,
+} from "../../models/Group";
+import GroupDetailHeader from "./GroupDetailHeader";
 
 const GroupDetail = () => {
-  const expenses = [
-    {
-      id: "1",
-      description: "Ăn tối nhà hàng hải sản",
-      amount: 1200000,
-      date: "2026-02-21",
-      paidBy: "An trả",
-      category: "Ăn uống",
-      split: "Chia 4 người",
-    },
-    {
-      id: "2",
-      description: "Thuê xe máy",
-      amount: 800000,
-      date: "2026-02-21",
-      paidBy: "Bình trả",
-      category: "Di chuyển",
-      split: "Chia 4 người",
-    },
-    {
-      id: "3",
-      description: "Khách sạn 3 đêm",
-      amount: 4000000,
-      date: "2026-02-20",
-      paidBy: "Bạn trả",
-      category: "Nhà ở",
-      split: "Chia 4 người",
-    },
-  ];
-
   const { id } = useParams() as { id: string };
 
   const { data, isLoading } = useGetById<GroupDetailResponse>(
@@ -47,13 +19,23 @@ const GroupDetail = () => {
     id,
   );
 
+  const { data: membersData } = useGetById<GroupMemberResponse>(
+    ResourceURL.GROUP_MEMBER,
+    "group-members",
+    id,
+  );
+
+  const { data: expenseGroupData } = useGetById(ResourceURL.EXPENSE_GROUP, "expense-groups", id);
+
+  const member = membersData?.data?.members ?? [];
+  console.log(data?.members)
+
   if (isLoading) return <Skeleton />;
 
   if (!data) return <Empty />;
   return (
     <div className="pb-10">
-      <GroupDetailHeader group={data} />
-
+      <GroupDetailHeader group={data} members={member} />
       <Tabs
         items={[
           {
@@ -63,22 +45,22 @@ const GroupDetail = () => {
               <GroupExpensesTab
                 expenses={data?.expenses ?? []}
                 currency={data.group.baseCurrency}
+                members={data.members ?? []}
               />
             ),
           },
           {
             key: "balances",
-            label: "Số dư",
+            label: "Thanh toán",
             children: (
               <BalanceTab
-                members={data.members}
+                members={data.members ?? []}
                 currency={data.group.baseCurrency}
               />
             ),
           },
         ]}
       />
-      <MemberForm members={data.members} />
     </div>
   );
 };

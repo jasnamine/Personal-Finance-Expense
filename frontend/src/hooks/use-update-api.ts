@@ -16,7 +16,7 @@ const useUpdateApi = <I extends { id: string }, O>(
     onSuccess: () => {
       NotifyUtils.success("Cập nhật thành công");
       void queryClient.invalidateQueries({
-        queryKey: [resourceKey, "getAll"],
+        queryKey: [resourceKey],
       });
     },
 
@@ -25,6 +25,5 @@ const useUpdateApi = <I extends { id: string }, O>(
     },
   });
 };
-
 
 export default useUpdateApi;

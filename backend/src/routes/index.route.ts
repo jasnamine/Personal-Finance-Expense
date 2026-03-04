@@ -4,6 +4,7 @@ import categoryRoute from "./category.route";
 import expenseRoute from "./expense.route";
 import groupRoute from "./group.route"
 import groupMemberRoute from "./groupMember.route";
+import expenseGroupRoute from "./expenseGroup.route";
 
 const setupRoutes = async (app: Express) => {
   app.use("/api/v1/auth", authRoute);
@@ -11,6 +12,7 @@ const setupRoutes = async (app: Express) => {
   app.use("/api/v1/expenses", expenseRoute)
   app.use("/api/v1/groups", groupRoute)
   app.use("/api/v1/group-members", groupMemberRoute)
+    app.use("/api/v1/expense-groups", expenseGroupRoute);
 };
 
 export default setupRoutes;

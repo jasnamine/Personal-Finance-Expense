@@ -10,7 +10,7 @@ interface GroupFormProps {
 const GroupForm = ({ form }: GroupFormProps) => {
   return (
     <form>
-      <label className="block mb-1 ">Tên nhóm</label>
+      <label className="block mb-1 font-medium">Tên nhóm</label>
       <Controller
         name="name"
         control={form.control}

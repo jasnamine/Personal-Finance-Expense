@@ -7,11 +7,11 @@ import { z } from "zod";
 import AppCard from "../../components/Card/AppCard";
 import AppModal from "../../components/Modal/AppModal";
 import ResourceURL from "../../constants/ResourceURL";
+import useDeleteByIdApi from "../../hooks/usde-delete-by-id-api";
 import useCreateApi from "../../hooks/use-create-api";
 import useGetAllApi from "../../hooks/use-get-all-api";
 import useUpdateApi from "../../hooks/use-update-api";
 import type { CategoryRequest, CategoryResponse } from "../../models/Category";
-import useDeleteByIdApi from "../../hooks/usde-delete-by-id-api";
 import CategoryAdd from "./CategoryAdd";
 import CategoryList from "./CategoryList";
 export const categorySchema = z.object({
@@ -90,6 +90,8 @@ const Category = () => {
   const handleDeleteCategory = (id: string) => {
     deleteApi.mutate(id);
   };
+
+  console.log(categoriesList);
 
   return (
     <Content>

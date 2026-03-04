@@ -1,12 +1,15 @@
-import { Schema, model, Document, Types } from "mongoose";
-import { TRANSACTION_TYPE, TransactionType } from "../enums/TransactionType.enum";
+import { Document, Schema, Types, model } from "mongoose";
+import {
+  TRANSACTION_TYPE,
+  TransactionType,
+} from "../enums/TransactionType.enum";
 
 export interface IExpense extends Document {
   amount: number;
   currency: string;
   date: Date;
   description?: string;
-  type: TransactionType; 
+  type: TransactionType;
   paidBy?: Types.ObjectId;
   categoryId?: Types.ObjectId;
   createdBy?: Types.ObjectId;
@@ -14,8 +17,7 @@ export interface IExpense extends Document {
   splits?: Array<{
     userId: Types.ObjectId;
     amount: number;
-    percentage?: number;
-    shares?: number;
+    splitType: "EQUAL" | "PERCENTAGE" | "EXACT";
   }>;
   receiptUrl?: string;
   isSettled?: boolean;
@@ -35,7 +37,7 @@ const expenseSchema = new Schema<IExpense>({
   },
   paidBy: { type: Schema.Types.ObjectId, ref: "User" },
   categoryId: { type: Schema.Types.ObjectId, ref: "Category" },
-  createdBy: { type: Schema.Types.ObjectId, ref: "User"},
+  createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   groupId: { type: Schema.Types.ObjectId, ref: "Group" },
   splits: [
     {
@@ -55,4 +57,3 @@ expenseSchema.index({ userId: 1, groupId: 1, date: -1 });
 expenseSchema.index({ groupId: 1 });
 
 export default model<IExpense>("Expense", expenseSchema);
-

@@ -43,6 +43,7 @@ function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/missing" element={<Missing />} />
         <Route path="*" element={<NotFound />} />
+        <Route path='/grp-detail' element={<GroupDetail />} />
       </Routes>
     </Router>
   );

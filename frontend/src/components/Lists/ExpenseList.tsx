@@ -1,4 +1,4 @@
-import { List, Button, Popconfirm, Space, Tag, Typography } from "antd";
+import { Card, Button, Popconfirm, Space, Tag, Typography } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
@@ -21,29 +21,14 @@ const formatCurrency = (v: number, currency: string) =>
 
 const ExpenseList = ({ expenses, currency }: Props) => {
   return (
-    <List
-      itemLayout="horizontal"
-      dataSource={expenses}
-      renderItem={(item) => (
-        <List.Item
-          className="px-6 py-5 hover:bg-gray-50 group"
-          actions={[
-            <Button
-              type="text"
-              icon={<EditOutlined />}
-              className="opacity-0 group-hover:opacity-100"
-            />,
-            <Popconfirm title="Xóa chi tiêu này?">
-              <Button
-                type="text"
-                danger
-                icon={<DeleteOutlined />}
-                className="opacity-0 group-hover:opacity-100"
-              />
-            </Popconfirm>,
-          ]}
+    <div className="space-y-3">
+      {expenses.map((item) => (
+        <Card
+          key={item._id}
+          className="hover:bg-gray-50 transition-all"
+          styles={{ body: { padding: "20px 24px" } }}
         >
-          <div className="flex items-center w-full gap-4">
+          <div className="flex items-center w-full gap-4 group">
             <div className="flex-1">
               <Text strong>{item.description}</Text>
 
@@ -58,10 +43,27 @@ const ExpenseList = ({ expenses, currency }: Props) => {
             <Text strong className="text-red-500">
               {formatCurrency(item.amount, currency)}
             </Text>
+
+            <Space>
+              <Button
+                type="text"
+                icon={<EditOutlined />}
+                className="opacity-0 group-hover:opacity-100"
+              />
+
+              <Popconfirm title="Xóa chi tiêu này?">
+                <Button
+                  type="text"
+                  danger
+                  icon={<DeleteOutlined />}
+                  className="opacity-0 group-hover:opacity-100"
+                />
+              </Popconfirm>
+            </Space>
           </div>
-        </List.Item>
-      )}
-    />
+        </Card>
+      ))}
+    </div>
   );
 };
 

@@ -21,14 +21,17 @@ import type { GroupDetailResponse } from "../../models/Group";
 import MemberForm from "./MemberForm";
 interface GroupDetailProps {
   group: GroupDetailResponse;
+  members: GroupDetailResponse["members"];
 }
 const { Title, Paragraph } = Typography;
-const GroupDetailHeader = ({ group }: GroupDetailProps) => {
+const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
   const formatVND = (v: any) =>
     new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(v);
+  
+  console.log(members)
 
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const handleSubmit = () => {};
@@ -86,10 +89,12 @@ const GroupDetailHeader = ({ group }: GroupDetailProps) => {
               }
               value={group.totalExpense}
               formatter={formatVND}
-              valueStyle={{
-                fontSize: "1.25rem",
-                fontWeight: 700,
-                color: "#1f2937",
+              styles={{
+                content: {
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  color: "#1f2937",
+                },
               }}
             />
           </div>
@@ -107,10 +112,12 @@ const GroupDetailHeader = ({ group }: GroupDetailProps) => {
               }
               value={group.members?.length || 4}
               suffix="người"
-              valueStyle={{
-                fontSize: "1.25rem",
-                fontWeight: 700,
-                color: "#1f2937",
+              styles={{
+                content: {
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  color: "#1f2937",
+                },
               }}
             />
           </div>
@@ -127,10 +134,12 @@ const GroupDetailHeader = ({ group }: GroupDetailProps) => {
                 </span>
               }
               value={group.expenses?.length || 0}
-              valueStyle={{
-                fontSize: "1.25rem",
-                fontWeight: 700,
-                color: "#1f2937",
+              styles={{
+                content: {
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  color: "#1f2937",
+                },
               }}
             />
           </div>
@@ -142,8 +151,9 @@ const GroupDetailHeader = ({ group }: GroupDetailProps) => {
         onClose={() => setIsMemberModalOpen(false)}
         title="Quản lý thành viên"
         onSubmit={handleSubmit}
+        isFooterVisible={false}
       >
-        <MemberForm members={group.members} />
+        <MemberForm members={members ?? []} />
       </AppModal>
     </Card>
   );

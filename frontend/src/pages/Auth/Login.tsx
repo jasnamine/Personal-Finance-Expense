@@ -37,7 +37,6 @@ const Login = () => {
   const loginMutation = useMutation<LoginResponse, ErrorMessage, LoginRequest>({
     mutationFn: (data) => publicApi.post(ResourceURL.LOGIN, data),
     onSuccess: (data) => {
-      console.log(data)
       setAuth({
         user: data.data,
         accessToken: data.data.accessToken,

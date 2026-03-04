@@ -8,28 +8,38 @@ interface AppModalProps {
   children: React.ReactNode;
   title: string;
   onSubmit: () => void;
+  isFooterVisible?: boolean;
 }
 
-const AppModal = ({ isOpen, onClose, children, title, onSubmit }: AppModalProps) => {
+const AppModal = ({
+  isOpen,
+  onClose,
+  children,
+  title,
+  onSubmit,
+  isFooterVisible = true,
+}: AppModalProps) => {
   return (
     <Modal
       title={<div className="pb-1 border-b">{title}</div>}
       open={isOpen}
       onCancel={onClose}
-      footer={[
-        <Button key="cancel" size="large" onClick={onClose}>
-          Hủy
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          size="large"
-          icon={<Plus />}
-          onClick={onSubmit}
-        >
-          {title}
-        </Button>,
-      ]}
+      footer={
+        isFooterVisible && [
+          <Button key="cancel" size="large" onClick={onClose}>
+            Hủy
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            size="large"
+            icon={<Plus />}
+            onClick={onSubmit}
+          >
+            {title}
+          </Button>,
+        ]
+      }
       centered
     >
       <section className="py-1">{children}</section>

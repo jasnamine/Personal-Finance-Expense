@@ -39,9 +39,14 @@ connectRedis();
 
 const server = http.createServer(app);
 initSocket(server);
-server.listen(config.PORT);
-
-app.listen(config.PORT, async () => {
-  console.log(`Server listening on port ${config.PORT} in ${config.NODE_ENV}`);
-  await connectDatabase();
+server.listen(config.PORT, async () => {
+    console.log(
+      `Server listening on port ${config.PORT} in ${config.NODE_ENV}`,
+    );
+    await connectDatabase();
 });
+
+// app.listen(config.PORT, async () => {
+//   console.log(`Server listening on port ${config.PORT} in ${config.NODE_ENV}`);
+//   await connectDatabase();
+// });
