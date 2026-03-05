@@ -15,7 +15,7 @@ const GroupDetail = () => {
 
   const { data, isLoading } = useGetById<GroupDetailResponse>(
     ResourceURL.GROUP,
-    "groups",
+    "group-detail",
     id,
   );
 
@@ -25,10 +25,7 @@ const GroupDetail = () => {
     id,
   );
 
-  const { data: expenseGroupData } = useGetById(ResourceURL.EXPENSE_GROUP, "expense-groups", id);
-
   const member = membersData?.data?.members ?? [];
-  console.log(data?.members)
 
   if (isLoading) return <Skeleton />;
 

@@ -99,7 +99,7 @@ const Register = () => {
             )}
           />
 
-          <InputError error={form.formState.errors.username} />
+          <InputError error={form.formState.errors.username?.message} />
           <Controller
             name="email"
             control={form.control}
@@ -113,7 +113,7 @@ const Register = () => {
             )}
           />
 
-          <InputError error={form.formState.errors.email} />
+          <InputError error={form.formState.errors.email?.message} />
 
           <Controller
             name="password"
@@ -127,7 +127,7 @@ const Register = () => {
               />
             )}
           />
-          <InputError error={form.formState.errors.password} />
+          <InputError error={form.formState.errors.password?.message} />
 
           <Controller
             name="confirmPassword"
@@ -142,7 +142,7 @@ const Register = () => {
             )}
           />
 
-          <InputError error={form.formState.errors.confirmPassword} />
+          <InputError error={form.formState.errors.confirmPassword?.message} />
 
           <AppButton type="primary" htmlType="submit" block>
             Đăng ký

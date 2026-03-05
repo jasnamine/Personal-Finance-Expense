@@ -24,7 +24,7 @@ const CategoryAdd = ({ form }: CategoryAddProps) => {
           <Input {...field} placeholder="Tên danh mục" size="large" />
         )}
       />
-      <InputError error={form.formState.errors.name} />
+      <InputError error={form.formState.errors.name?.message} />
 
       <label className="block mb-1 mt-2">Tên loại</label>
       <Controller
@@ -47,7 +47,7 @@ const CategoryAdd = ({ form }: CategoryAddProps) => {
           </Radio.Group>
         )}
       />
-      <InputError error={form.formState.errors.type} />
+      <InputError error={form.formState.errors.type?.message} />
     </form>
   );
 };

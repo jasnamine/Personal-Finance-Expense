@@ -3,21 +3,22 @@ import {
   TRANSACTION_TYPE,
   TransactionType,
 } from "../enums/TransactionType.enum";
+import { SPLIT_TYPE, SplitType } from "../enums/SplitType";
 
 export interface IExpense extends Document {
   amount: number;
   currency: string;
   date: Date;
   description?: string;
-  type: TransactionType;
+  type?: TransactionType;
   paidBy?: Types.ObjectId;
   categoryId?: Types.ObjectId;
   createdBy?: Types.ObjectId;
   groupId?: Types.ObjectId;
   splits?: Array<{
     userId: Types.ObjectId;
-    amount: number;
-    splitType: "EQUAL" | "PERCENTAGE" | "EXACT";
+    value: number;
+    splitType: SplitType;
   }>;
   receiptUrl?: string;
   isSettled?: boolean;
@@ -33,7 +34,6 @@ const expenseSchema = new Schema<IExpense>({
   type: {
     type: String,
     enum: Object.values(TRANSACTION_TYPE),
-    required: true,
   },
   paidBy: { type: Schema.Types.ObjectId, ref: "User" },
   categoryId: { type: Schema.Types.ObjectId, ref: "Category" },
@@ -42,9 +42,11 @@ const expenseSchema = new Schema<IExpense>({
   splits: [
     {
       userId: { type: Schema.Types.ObjectId, ref: "User" },
-      amount: { type: Number },
-      percentage: { type: Number },
-      shares: { type: Number },
+      value: { type: Number },
+      splitType: {
+        type: String,
+        enum: Object.values(SPLIT_TYPE),
+      },
     },
   ],
   receiptUrl: { type: String },
@@ -53,7 +55,7 @@ const expenseSchema = new Schema<IExpense>({
   updatedAt: { type: Date, default: Date.now },
 });
 
-expenseSchema.index({ userId: 1, groupId: 1, date: -1 });
+expenseSchema.index({ groupId: 1, date: -1 });
 expenseSchema.index({ groupId: 1 });
 
 export default model<IExpense>("Expense", expenseSchema);

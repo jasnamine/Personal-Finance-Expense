@@ -19,6 +19,7 @@ import { useState } from "react";
 import AppModal from "../../components/Modal/AppModal";
 import type { GroupDetailResponse } from "../../models/Group";
 import MemberForm from "./MemberForm";
+
 interface GroupDetailProps {
   group: GroupDetailResponse;
   members: GroupDetailResponse["members"];
@@ -30,8 +31,6 @@ const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
       style: "currency",
       currency: "VND",
     }).format(v);
-  
-  console.log(members)
 
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const handleSubmit = () => {};

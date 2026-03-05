@@ -10,7 +10,7 @@ import {
   Typography,
 } from "antd";
 import type { GroupResponse } from "../../models/Group";
-import dayjs from "dayjs"; // Recommended for date formatting
+import dayjs from "dayjs"; 
 import { useNavigate } from "react-router-dom";
 
 const { Text, Paragraph } = Typography;

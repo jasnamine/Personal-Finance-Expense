@@ -15,10 +15,11 @@ import Missing from "./pages/Errors/Missing";
 import NotFound from "./pages/Errors/NotFound";
 import Unauthorized from "./pages/Errors/Unauthorized";
 import Group from "./pages/Group/Group";
-import GroupDetail from "./pages/Group/GroupDetail";
+
 import Income from "./pages/Income/Income";
 import Outcome from "./pages/Outcome/Outcome";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import GroupDetail from "./pages/GroupDetail/GroupDetail";
 
 function App() {
   return (
@@ -43,7 +44,6 @@ function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/missing" element={<Missing />} />
         <Route path="*" element={<NotFound />} />
-        <Route path='/grp-detail' element={<GroupDetail />} />
       </Routes>
     </Router>
   );

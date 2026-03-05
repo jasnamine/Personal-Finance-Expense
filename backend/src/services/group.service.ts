@@ -117,9 +117,10 @@ const getGroupById = async (userId: string, groupId: string) => {
 
   // 3. Lấy tất cả giao dịch trong group
   const expenses = await ExpenseModel.find({ groupId })
-    .populate("paidBy", "name email")
-    .populate("createdBy", "name email")
+    .populate("paidBy", "email")
+    .populate("createdBy", "email")
     .lean();
+
 
   const formattedExpenses = expenses.map((e: any) => ({
     _id: e._id.toString(),
@@ -128,13 +129,13 @@ const getGroupById = async (userId: string, groupId: string) => {
     date: e.date,
     description: e.description,
     type: e.type,
-    paidBy: e.paidBy?._id.toString(),
-    createdBy: e.createdBy?._id.toString(),
+    paidBy: e.paidBy?.email.toString(),
+    paidById: e.paidBy?._id.toString(),
+    createdBy: e.createdBy?.email.toString(),
     splits: e.splits?.map((s: any) => ({
       userId: s.userId.toString(),
-      amount: s.amount,
-      percentage: s.percentage,
-      shares: s.shares,
+      value: s.value,
+      splitType: s.splitType,
     })),
     receiptUrl: e.receiptUrl,
     isSettled: e.isSettled,

@@ -93,7 +93,7 @@ const Login = () => {
             )}
           />
 
-          <InputError error={form.formState.errors.email} />
+          <InputError error={form.formState.errors.email?.message} />
 
           <Controller
             name="password"
@@ -107,7 +107,7 @@ const Login = () => {
               />
             )}
           />
-          <InputError error={form.formState.errors.password} />
+          <InputError error={form.formState.errors.password?.message} />
 
           <AppButton type="primary" htmlType="submit" block>
             Đăng nhập

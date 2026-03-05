@@ -153,7 +153,7 @@ const MemberForm = ({ members }: MemberFormProps) => {
               ...oldData.data,
               members: oldData.data.members.map((m) =>
                 m.userId === updatedMember.userId
-                  ? { ...m, ...updatedMember } // MERGE !!!
+                  ? { ...m, ...updatedMember } 
                   : m,
               ),
             },
@@ -169,7 +169,6 @@ const MemberForm = ({ members }: MemberFormProps) => {
         (oldData) => {
           if (!oldData) return oldData;
 
-          // tránh duplicate
           const exists = oldData.data.members.some(
             (m) => m.userId === newMember.userId,
           );
@@ -246,7 +245,7 @@ const MemberForm = ({ members }: MemberFormProps) => {
           Thêm
         </AppButton>
       </div>
-      <InputError error={form.formState.errors?.email} />
+      <InputError error={form.formState.errors?.email?.message} />
 
       {/* Tiền tệ cơ bản */}
 

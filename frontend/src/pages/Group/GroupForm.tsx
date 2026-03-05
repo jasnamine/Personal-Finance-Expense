@@ -18,7 +18,6 @@ const GroupForm = ({ form }: GroupFormProps) => {
           <Input {...field} placeholder="Tên nhóm" size="large" />
         )}
       />
-      {/* Tiền tệ cơ bản */}
 
       <label className="block mb-1 font-medium">Tiền tệ cơ bản</label>
       <Controller
@@ -84,7 +83,6 @@ const GroupForm = ({ form }: GroupFormProps) => {
         </Col>
       </Row>
 
-      {/* Mô tả */}
       <label className="block mb-1 font-medium">Mô tả (không bắt buộc)</label>
       <Controller
         name="description"

@@ -1,13 +1,11 @@
-import type { FieldError } from "react-hook-form";
-
 interface InputErrorProps {
-  error?: FieldError;
+  error?: string;
 }
 
 const InputError = ({ error }: InputErrorProps) => {
-  if (!error?.message) return null;
+  if (!error) return null;
 
-  return <p className="text-red-500 text-sm mt-1">{error.message}</p>;
+  return <p className="text-red-500 text-sm mt-1">{error}</p>;
 };
 
 export default InputError;

@@ -1,7 +1,6 @@
 import type { GroupRole, TransactionType } from "../types";
-import type { ExpenseResponse } from "./Expense";
 
-type SplitType = "EQUAL" | "PERCENTAGE" | "EXACT";
+type SplitType = "EQUAL" | "EXACT";
 
 export interface GroupRequest {
   name: string;
@@ -42,7 +41,7 @@ export interface GroupDetailResponse {
     email?: string;
     role?: GroupRole;
   }[];
-  expenses?: ExpenseResponse[];
+  expenses?: GroupExpenseResponse[];
   totalExpense: number;
 }
 
@@ -52,30 +51,32 @@ export interface GroupExpenseRequest {
   paidBy: string;
   date: Date;
   splitType: SplitType;
-  splits?: {
+  splits: {
     userId: string;
     value: number;
+    splitType: SplitType;
   }[];
   receiptUrl?: File;
 }
 
 export interface GroupExpenseResponse {
+  _id: string;
   amount: number;
   currency: string;
   date: Date;
   description?: string;
-  type: TransactionType;
-  paidBy?: string;
-  groupId?: string;
-  splits?: Array<{
+  type?: TransactionType;
+  paidBy: string;
+  paidById?: string;
+  groupId: string;
+  splitType: SplitType;
+  splits: Array<{
     userId: string;
-    amount: number;
+    value: number;
     splitType: SplitType;
   }>;
   receiptUrl?: string;
   isSettled?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface GroupMemberRequest {

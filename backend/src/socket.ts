@@ -14,6 +14,10 @@ export const initSocket = (server: any) => {
       socket.join(groupId);
     });
 
+    socket.on("leave:group", (groupId: string) => {
+      socket.leave(groupId);
+    });
+
     socket.on("disconnect", () => {
       console.log("User disconnected");
     });

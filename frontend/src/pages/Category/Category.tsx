@@ -51,10 +51,10 @@ const Category = () => {
   >(ResourceURL.CATEGORY, "categories");
 
   const deleteApi = useDeleteByIdApi(ResourceURL.CATEGORY, "categories");
+  
 
   const handleSubmit = (data: CategoryRequest) => {
     if (category) {
-      console.log(category);
       updateApi.mutate({
         id: category._id,
         ...data,
@@ -91,7 +91,6 @@ const Category = () => {
     deleteApi.mutate(id);
   };
 
-  console.log(categoriesList);
 
   return (
     <Content>

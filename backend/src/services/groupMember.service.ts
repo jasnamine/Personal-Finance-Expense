@@ -78,8 +78,6 @@ const updateMemberRole = async (
     throw new ForbiddenException("Member not found in the group");
   }
 
-  console.log(updateMember)
-
   return {
     message: "Member role updated successfully",
     data: {
@@ -91,7 +89,6 @@ const updateMemberRole = async (
 };
 
 const deleteMember = async (groupId: string, memberId: string) => {
-  console.log(groupId,memberId)
   const member = await GroupMemberModel.findOne({ groupId, userId: memberId });
   const owner = await GroupMemberModel.findOne({
     groupId,
