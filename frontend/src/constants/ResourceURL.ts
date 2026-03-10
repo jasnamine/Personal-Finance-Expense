@@ -27,6 +27,10 @@ class ResourceURL {
 
   // GROUP MEMBER
   static GROUP_MEMBER = apiPath + "/group-members";
+  static BALANCE = apiPath + "/balances";
+  static SETTLEMENT = apiPath + "/settlements";
+  static SETTLEMENT_CREATE = (groupId: string) =>
+    apiPath + `/settlements/${groupId}`;
 
   // GROUP EXPENSE
   static EXPENSE_GROUP = apiPath + "/expense-groups";
@@ -38,7 +42,6 @@ class ResourceURL {
 
   // EXPENSE
   static EXPENSES = apiPath + "expenses";
-
 }
 
 export default ResourceURL;

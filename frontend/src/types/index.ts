@@ -68,7 +68,6 @@ export interface Settlement {
   toUserId: string;
   amount: number;
   method?: string;
-  recordedAt: string;
 }
 
 export interface Balance {

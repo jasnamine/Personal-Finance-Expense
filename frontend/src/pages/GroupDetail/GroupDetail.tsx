@@ -48,7 +48,7 @@ const GroupDetail = () => {
           },
           {
             key: "balances",
-            label: "Thanh toán",
+            label: "Số dư",
             children: (
               <BalanceTab
                 members={data.members ?? []}
