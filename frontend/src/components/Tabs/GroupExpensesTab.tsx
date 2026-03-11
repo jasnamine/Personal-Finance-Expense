@@ -16,7 +16,7 @@ import type {
 } from "../../models/Group";
 import ExpenseGroupForm from "../../pages/Group/ExpenseGroupForm";
 import AppCard from "../Card/AppCard";
-import ExpenseList from "../Lists/ExpenseList";
+import ExpenseList from "../Lists/ExpenseGroupList";
 import AppModal from "../Modal/AppModal";
 
 interface Props {

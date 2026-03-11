@@ -16,10 +16,9 @@ import NotFound from "./pages/Errors/NotFound";
 import Unauthorized from "./pages/Errors/Unauthorized";
 import Group from "./pages/Group/Group";
 
-import Income from "./pages/Income/Income";
-import Outcome from "./pages/Outcome/Outcome";
-import ProtectedRoute from "./routes/ProtectedRoute";
 import GroupDetail from "./pages/GroupDetail/GroupDetail";
+import Expense from "./pages/Personal/Expense";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
@@ -34,8 +33,7 @@ function App() {
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="category" element={<Category />} />
-            <Route path="income" element={<Income />} />
-            <Route path="outcome" element={<Outcome />} />
+            <Route path="personal" element={<Expense />} />
             <Route path="group" element={<Group />} />
             <Route path="group/group-detail/:id" element={<GroupDetail />} />
           </Route>

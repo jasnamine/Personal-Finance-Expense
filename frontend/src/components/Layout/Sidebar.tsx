@@ -1,11 +1,10 @@
 import {
   AppstoreOutlined,
-  LoginOutlined,
-  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   TagsOutlined,
   TeamOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Button, Menu, Tooltip } from "antd";
 import Sider from "antd/es/layout/Sider";
@@ -20,9 +19,8 @@ const rawItems = [
     label: "Dashboard",
   },
   { key: "/category", icon: <TagsOutlined size={18} />, label: "Danh mục" },
+  { key: "/personal", icon: <UserOutlined size={18} />, label: "Cá nhân" },
   { key: "/group", icon: <TeamOutlined size={18} />, label: "Nhóm" },
-  { key: "/income", icon: <LoginOutlined size={18} />, label: "Thu nhập" },
-  { key: "/outcome", icon: <LogoutOutlined size={18} />, label: "Chi tiêu" },
 ];
 
 const AppSidebar = () => {

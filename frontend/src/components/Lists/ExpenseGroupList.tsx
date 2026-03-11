@@ -23,7 +23,7 @@ const formatCurrency = (v: number, currency: string) =>
     currency,
   }).format(v);
 
-const ExpenseList = ({
+const ExpenseGroupList = ({
   expenses,
   currency,
   onEditGroupExpense,
@@ -89,4 +89,4 @@ const ExpenseList = ({
   );
 };
 
-export default ExpenseList;
+export default ExpenseGroupList;

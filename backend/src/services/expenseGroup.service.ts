@@ -5,7 +5,7 @@ import { BadRequestException, NotFoundException } from "../utils/appError";
 import { calculateSplits } from "./balance.service";
 
 export const createExpenseGroup = async (userId: string, body: IExpense) => {
-  const { description, amount, currency, date, type, paidBy, groupId, splits } = body;
+  const { description, amount, currency, date, paidBy, groupId, splits } = body;
   if (!splits || splits.length === 0) {
     throw new BadRequestException("Splits are required");
   }
@@ -25,7 +25,6 @@ export const createExpenseGroup = async (userId: string, body: IExpense) => {
     amount,
     currency: currency || "VND",
     date: new Date(date),
-    type,
     paidBy,
     groupId,
     createdBy: userId,
@@ -58,7 +57,7 @@ export const updateExpenseGroup = async (
   expenseId:string,
   updateData: Partial<IExpense>,
 ) => {
-  const { amount, splits, paidBy } = updateData;
+  const { amount, splits } = updateData;
 
   const member = await GroupMemberModel.findOne({ groupId, userId });
 

@@ -70,7 +70,13 @@ const ExpenseGroupForm = ({ form, members }: Props) => {
         name="amount"
         control={form.control}
         rules={{ required: "Nhập số tiền" }}
-        render={({ field }) => <InputNumber {...field} className="w-full" />}
+        render={({ field }) => (
+          <InputNumber
+            {...field}
+            className="w-full"
+            placeholder="Nhập số tiền"
+          />
+        )}
       />
       <InputError error={form.formState.errors.amount?.message} />
 
@@ -124,7 +130,7 @@ const ExpenseGroupForm = ({ form, members }: Props) => {
       <InputError error={form.formState.errors.splits?.message} />
 
       <label className="block mb-1 mt-4 font-medium">Hóa đơn</label>
-      <ReceiptUpload form={form} />
+      <ReceiptUpload form={form} name="receiptUrl" />
     </form>
   );
 };

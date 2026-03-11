@@ -1,8 +1,4 @@
 import { Document, Schema, Types, model } from "mongoose";
-import {
-  TRANSACTION_TYPE,
-  TransactionType,
-} from "../enums/TransactionType.enum";
 import { SPLIT_TYPE, SplitType } from "../enums/SplitType";
 
 export interface IExpense extends Document {
@@ -10,7 +6,6 @@ export interface IExpense extends Document {
   currency: string;
   date: Date;
   description?: string;
-  type?: TransactionType;
   paidBy?: Types.ObjectId;
   categoryId?: Types.ObjectId;
   createdBy?: Types.ObjectId;
@@ -31,10 +26,6 @@ const expenseSchema = new Schema<IExpense>({
   currency: { type: String, default: "VND" },
   date: { type: Date, required: true },
   description: { type: String },
-  type: {
-    type: String,
-    enum: Object.values(TRANSACTION_TYPE),
-  },
   paidBy: { type: Schema.Types.ObjectId, ref: "User" },
   categoryId: { type: Schema.Types.ObjectId, ref: "Category" },
   createdBy: { type: Schema.Types.ObjectId, ref: "User" },

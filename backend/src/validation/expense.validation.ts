@@ -6,7 +6,6 @@ export const createExpenseSchema = z.object({
     currency: z.string().optional(),
     date: z.string(),
     description: z.string().optional(),
-    type: z.enum(["income", "expense"]),
     categoryId: z.string().optional(),
   }),
 });
@@ -17,7 +16,6 @@ export const updateExpenseSchema = z.object({
     currency: z.string().optional(),
     date: z.string().optional(),
     description: z.string().optional(),
-    type: z.enum(["income", "expense"]).optional(),
     categoryId: z.string().optional(),
   }),
 });

@@ -1,5 +1,5 @@
 import { TRANSACTION_TYPE } from "../enums/TransactionType.enum";
-import Expense, { IExpense } from "../models/Expense.model";
+import Expense from "../models/Expense.model";
 import { BadRequestException, NotFoundException } from "../utils/appError";
 interface ExpenseQueryParams {
   startDate?: string;
@@ -11,7 +11,15 @@ interface ExpenseQueryParams {
   limit?: string | number;
 }
 
-export const findExpenses = async (
+interface CreateExpenseDto {
+  amount: number;
+  currency?: string;
+  date: string;
+  description?: string;
+  categoryId: string;
+}
+
+export const getExpenses = async (
   userId: string,
   query: ExpenseQueryParams,
 ) => {
@@ -26,17 +34,15 @@ export const findExpenses = async (
   } = query;
 
   const filter: any = { createdBy: userId, groupId: null };
-  if (startDate) {
-    filter.date = { $gte: new Date(startDate) };
+
+  if (startDate || endDate) {
+    filter.date = {};
   }
 
-  if (endDate) {
-    filter.date = { ...filter.date, $lte: new Date(endDate) };
-  }
+  if (startDate) filter.date.$gte = new Date(startDate);
+  if (endDate) filter.date.$lte = new Date(endDate);
 
-  if (categoryId) {
-    filter.categoryId = categoryId;
-  }
+  if (categoryId) filter.categoryId = categoryId;
 
   if (type) {
     if (!Object.values(TRANSACTION_TYPE).includes(type)) {
@@ -51,38 +57,34 @@ export const findExpenses = async (
 
   const pageNum = Number(page);
   const limitNum = Number(limit);
-
-  if (isNaN(pageNum) || pageNum < 1)
-    throw new BadRequestException("Page phải là số nguyên dương");
-  if (isNaN(limitNum) || limitNum < 1)
-    throw new BadRequestException("Limit phải là số nguyên dương");
-
   const skip = (pageNum - 1) * limitNum;
 
-  const expenses = await Expense.find(filter)
-    .populate("categoryId", "name type icon")
-    .sort({ date: -1 })
-    .skip(skip)
-    .limit(limitNum);
+  const [expenses, total] = await Promise.all([
+    Expense.find(filter)
+      .populate("categoryId", "name type icon")
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limitNum),
 
-  const total = await Expense.countDocuments(filter);
+    Expense.countDocuments(filter),
+  ]);
+
+  const totalPages = Math.ceil(total / limitNum);
 
   return {
-    message: "Expenses fetched successfully",
     data: expenses,
-    pagination: {
-      total,
-      page: pageNum,
-      limit: limitNum,
-      pages: Math.ceil(total / limitNum),
-    },
+    page: pageNum,
+    size: limitNum,
+    totalElements: total,
+    totalPages,
+    last: pageNum >= totalPages,
   };
 };
 
-export const createExpense = async (userId: string, body: IExpense) => {
-  const { amount, currency, date, description, type, categoryId } = body;
+export const createExpense = async (userId: string, body: CreateExpenseDto) => {
+  const { amount, currency, date, description, categoryId } = body;
 
-  if (!amount || !date || !type) {
+  if (!amount || !date) {
     throw new BadRequestException("Missing required fields");
   }
 
@@ -91,8 +93,6 @@ export const createExpense = async (userId: string, body: IExpense) => {
     currency: currency || "VND",
     date: new Date(date),
     description,
-    type,
-    paidBy: userId,
     createdBy: userId,
     categoryId,
     groupId: null,
@@ -107,8 +107,9 @@ export const createExpense = async (userId: string, body: IExpense) => {
 export const updateExpense = async (
   userId: string,
   expenseId: string,
-  body: IExpense,
+  body: CreateExpenseDto,
 ) => {
+  const { amount, date, description, categoryId } = body;
   const expense = await Expense.findOne({
     _id: expenseId,
     createdBy: userId,
@@ -121,7 +122,15 @@ export const updateExpense = async (
 
   await Expense.updateOne(
     { _id: expenseId, createdBy: userId, groupId: null },
-    { $set: body },
+    {
+      $set: {
+        amount,
+        date,
+        description,
+        categoryId,
+        
+      },
+    },
   );
 
   return {
@@ -196,5 +205,3 @@ export const getExpenseSummary = async (
     },
   };
 };
-
-

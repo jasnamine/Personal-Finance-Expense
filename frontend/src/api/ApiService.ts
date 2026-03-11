@@ -5,8 +5,12 @@ export type RequestParams = {
   page?: number;
   size?: number;
   sort?: string;
-  filter?: string;
+  filter?: string | null;
   search?: string;
+  type?: string | null;
+  categoryId?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
   all?: number;
 };
 /**

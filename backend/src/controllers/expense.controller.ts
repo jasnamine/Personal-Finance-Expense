@@ -10,7 +10,7 @@ export const getExpenses = asyncHandler(async (req: Request, res: Response) => {
     throw new BadRequestException("User ID is missing in request");
   }
 
-  const response = await expenseService.findExpenses(userId, req.query);
+  const response = await expenseService.getExpenses(userId, req.query);
   res.status(200).json(response);
 });
 

@@ -3,11 +3,11 @@ import type { UploadFile, UploadProps } from "antd";
 import { Image, Upload } from "antd";
 import type { RcFile } from "antd/es/upload";
 import { useState } from "react";
-import type { UseFormReturn } from "react-hook-form";
-import type { GroupExpenseRequest } from "../../models/Group";
+import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
-interface Props {
-  form: UseFormReturn<GroupExpenseRequest>;
+interface Props<T extends FieldValues> {
+  form: UseFormReturn<T>;
+  name: Path<T>;
 }
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -18,7 +18,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = reject;
   });
 
-const ReceiptUpload = ({ form }: Props) => {
+const ReceiptUpload = <T extends FieldValues>({ form, name }: Props<T>) => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -39,12 +39,12 @@ const ReceiptUpload = ({ form }: Props) => {
     const fileObj = latestFile[0]?.originFileObj;
 
     if (fileObj) {
-      form.setValue("receiptUrl", fileObj);
+      form.setValue(name, fileObj as any);
     }
   };
 
   const handleRemove: UploadProps["onRemove"] = () => {
-    form.setValue("receiptUrl", undefined);
+    form.setValue(name, undefined as any);
     setFileList([]);
     return true;
   };

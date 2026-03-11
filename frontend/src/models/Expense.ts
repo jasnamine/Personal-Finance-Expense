@@ -1,34 +1,20 @@
-import type { Split, TransactionType } from "../types";
+import type { TransactionType } from "../types";
 
 export interface ExpenseRequest {
   amount: number;
-  currency?: string;
-  date: string;
-  description: string;
-  type: TransactionType;
-  paidBy?: string;
+  date: Date;
+  description?: string;
+  // type: TransactionType;
   categoryId: string;
-  createdBy?: string;
-  groupId?: string;
-  splits?: Split[];
   receiptUrl?: string;
-  isSettled?: boolean;
 }
 
 export interface ExpenseResponse {
   _id: string;
-  amount?: number;
-  currency?: string;
-  date?: string;
+  amount: number;
+  date: Date;
   description?: string;
-  type?: TransactionType;
-  paidBy: string;
-  categoryId?: string;
-  createdBy: string;
-  groupId?: string;
-  splits?: Split[];
+  // type: TransactionType;
+  categoryId: string;
   receiptUrl?: string;
-  isSettled?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
 }
