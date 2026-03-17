@@ -1,6 +1,8 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Table, Tag } from "antd";
 import type { ExpenseResponse } from "../../models/Expense";
+import { formatCurrency } from "../../utils/formatCurrency";
+import { useAuthStore } from "../../stores/authStore";
 
 interface ExpenseListProps {
   expenses: ExpenseResponse[];
@@ -12,6 +14,9 @@ const ExpenseList = ({
   onEditExpense,
   onDeleteExpense,
 }: ExpenseListProps) => {
+  const { user } = useAuthStore();
+
+  const currency = user?.currency || "VND";
   return (
     <Table
       dataSource={expenses}
@@ -49,7 +54,7 @@ const ExpenseList = ({
         {
           title: "Số tiền",
           dataIndex: "amount",
-          render: (a) => <p>{a}</p>,
+          render: (a) => <p> {formatCurrency(a || 0, currency)}</p>,
         },
         {
           title: "Mô tả",

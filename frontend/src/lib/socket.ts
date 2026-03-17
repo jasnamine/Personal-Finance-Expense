@@ -1,3 +1,6 @@
 import { io } from "socket.io-client";
+import ApplicationConstants from "../constants/ApplicationConstants";
 
-export const socket = io("http://localhost:5000");
+const socketPath = ApplicationConstants.WEBSOCKET_PATH;
+
+export const socket = io(socketPath);

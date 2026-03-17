@@ -25,4 +25,12 @@ export interface LoginResponse {
   };
 }
 
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  currency: string;
+  createdAt: string;
+}
+
 

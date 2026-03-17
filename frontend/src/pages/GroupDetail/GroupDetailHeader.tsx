@@ -19,6 +19,7 @@ import { useState } from "react";
 import AppModal from "../../components/Modal/AppModal";
 import type { GroupDetailResponse } from "../../models/Group";
 import MemberForm from "./MemberForm";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 interface GroupDetailProps {
   group: GroupDetailResponse;
@@ -26,12 +27,6 @@ interface GroupDetailProps {
 }
 const { Title, Paragraph } = Typography;
 const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
-  const formatVND = (v: any) =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(v);
-
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const handleSubmit = () => {};
   return (
@@ -87,7 +82,9 @@ const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
                 </span>
               }
               value={group.totalExpense}
-              formatter={formatVND}
+              formatter={(value) =>
+                formatCurrency(Number(value ?? 0), group.group.baseCurrency)
+              }
               styles={{
                 content: {
                   fontSize: "1.25rem",

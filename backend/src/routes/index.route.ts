@@ -8,6 +8,7 @@ import expenseGroupRoute from "./expenseGroup.route";
 import groupRoute from "./group.route";
 import groupMemberRoute from "./groupMember.route";
 import settlementRoute from "./settlement.route";
+import userRoute from "./user.route"
 
 const setupRoutes = async (app: Express) => {
   app.use("/api/v1/auth", authRoute);
@@ -19,6 +20,7 @@ const setupRoutes = async (app: Express) => {
   app.use("/api/v1/balances", balanceRoute);
   app.use("/api/v1/settlements", settlementRoute);
   app.use("/api/v1/dashboard", dashboardRoute);
+  app.use("/api/v1/user", userRoute);
 };
 
 export default setupRoutes;

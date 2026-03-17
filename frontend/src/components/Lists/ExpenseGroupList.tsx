@@ -7,6 +7,7 @@ import { Button, Card, Popconfirm, Space, Typography } from "antd";
 import dayjs from "dayjs";
 import { TrendingDown } from "lucide-react";
 import type { GroupExpenseResponse } from "../../models/Group";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 const { Text } = Typography;
 
@@ -17,11 +18,6 @@ interface Props {
   onDeleteGroupExpense: (id: string) => void;
 }
 
-const formatCurrency = (v: number, currency: string) =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency,
-  }).format(v);
 
 const ExpenseGroupList = ({
   expenses,
@@ -65,7 +61,7 @@ const ExpenseGroupList = ({
 
           <div className="flex items-center gap-4">
             <Text strong className="text-red-500 whitespace-nowrap">
-              {formatCurrency(expense.amount, currency)}
+              {formatCurrency(expense.amount || 0, currency)}
             </Text>
 
             <Space>

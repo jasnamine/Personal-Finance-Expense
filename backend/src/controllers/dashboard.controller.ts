@@ -13,8 +13,11 @@ export const getDashboard = async (req: Request, res: Response) => {
   const monthlyStats = await dashboardService.getMonthlyStats(userId);
 
   res.json({
-    summary,
-    categoryStats,
-    monthlyStats,
+    message: "Fetch dashboar successfully",
+    data: {
+      summary,
+      categoryStats,
+      monthlyStats,
+    },
   });
 };

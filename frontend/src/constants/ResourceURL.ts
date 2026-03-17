@@ -41,7 +41,10 @@ class ResourceURL {
   static EXPENSE = apiPath + "/expenses";
 
   // EXPENSE
-  static EXPENSES = apiPath + "expenses";
+  static EXPENSES = apiPath + "/expenses";
+
+  // DASHBOARD
+  static DASHBOARD = apiPath + "/dashboard"
 }
 
 export default ResourceURL;

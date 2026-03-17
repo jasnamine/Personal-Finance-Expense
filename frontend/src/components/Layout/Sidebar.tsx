@@ -48,16 +48,20 @@ const AppSidebar = () => {
       width={240}
       className="border-r border-gray-100 flex flex-col"
     >
-      {/* Logo */}
-      <div className="flex items-center px-6 py-6 space-x-2 overflow-hidden">
-        <div className="w-8 h-8 bg-indigo-600 rounded-xl flex items-center p-1 justify-center text-white shadow">
-          <Wallet size={16} />
-        </div>
+      <div className="flex items-center px-6 py-6 space-x-2 overflow-hidden justify-between">
         {!collapsed && (
-          <span className="font-bold text-xl tracking-tight text-indigo-600 whitespace-nowrap">
-            Retrofin
-          </span>
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 bg-indigo-600 rounded-md flex items-center p-1 justify-center text-white shadow">
+              <Wallet size={14} />
+            </div>
+          </div>
         )}
+        <Button
+          type="text"
+          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          onClick={() => setCollapsed(!collapsed)}
+          className="text-lg w-10 h-10 flex items-center justify-center hover:bg-indigo-50 text-indigo-600"
+        />
       </div>
 
       {/* Menu */}
@@ -70,16 +74,6 @@ const AppSidebar = () => {
           fontWeight: 500,
         }}
       />
-
-      {/* Toggle button */}
-      <div className="flex justify-center py-4 border-t">
-        <Button
-          type="text"
-          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-lg w-10 h-10 flex items-center justify-center hover:bg-indigo-50 text-indigo-600"
-        />
-      </div>
     </Sider>
   );
 };

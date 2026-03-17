@@ -18,6 +18,7 @@ import Group from "./pages/Group/Group";
 
 import GroupDetail from "./pages/GroupDetail/GroupDetail";
 import Expense from "./pages/Personal/Expense";
+import Profile from "./pages/Profile/Profile";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/" element={<ProtectedRoute />}>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Navigate to="/dashboard" />} />
+            <Route path="profile" element={<Profile />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="category" element={<Category />} />
             <Route path="personal" element={<Expense />} />

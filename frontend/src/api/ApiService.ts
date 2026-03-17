@@ -105,6 +105,11 @@ class ApiService {
     return response.data;
   }
 
+  async put<I, O>(resourceURL: string, data: I): Promise<O> {
+    const response = await this.axios.put<O>(resourceURL, data);
+    return response.data;
+  }
+
   /**
    * Hàm deleteById xóa entity theo id nhận được
    * @param resourceUrl
@@ -114,7 +119,11 @@ class ApiService {
     await this.axios.delete(`${resourceURL}/${id}`);
   }
 
-  async delete<I>(resourceURL: string, id: string, requestBody?: I): Promise<void>{
+  async delete<I>(
+    resourceURL: string,
+    id: string,
+    requestBody?: I,
+  ): Promise<void> {
     await this.axios.delete(`${resourceURL}/${id}`, { data: requestBody });
   }
 

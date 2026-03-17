@@ -5,8 +5,11 @@ import {
 } from "@ant-design/icons";
 import { Dropdown, Space, Tooltip, type MenuProps } from "antd";
 import Avatar from "antd/es/avatar";
+import axios from "axios";
 import { Moon, Search, Sun } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ResourceURL from "../../constants/ResourceURL";
 import { useAuthStore } from "../../stores/authStore";
 
 const userMenuItems: MenuProps["items"] = [
@@ -34,6 +37,8 @@ const userMenuItems: MenuProps["items"] = [
 const Header = () => {
   const [dark, setDark] = useState(false);
   const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const { accessToken } = useAuthStore();
 
   const toggleDark = () => {
     setDark(!dark);
@@ -56,9 +61,43 @@ const Header = () => {
     return (firstLetter + lastLetter).toUpperCase();
   };
 
+  const logoutApi = async () => {
+    try {
+      return await axios.post(
+        ResourceURL.LOGOUT,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const logout = useAuthStore((state) => state.logout);
+
+  const handleMenuClick: MenuProps["onClick"] = async ({ key }) => {
+    if (key == "logout") {
+      await logoutApi();
+      logout();
+      navigate("/login");
+    }
+
+    if (key == "profile") {
+      navigate("/profile");
+    }
+  };
+
   return (
     <header className="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur  px-8 flex justify-between items-center">
-      <div className="relative w-64 hidden md:block">
+      <span className="font-bold text-[20px] tracking-tight text-indigo-600 whitespace-nowrap">
+        Retrofin
+      </span>
+      <div className="relative w-2xl hidden md:block">
         <Search
           className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
           size={18}
@@ -82,7 +121,7 @@ const Header = () => {
         <Space size={20}>
           {/* Dropdown Avatar */}
           <Dropdown
-            menu={{ items: userMenuItems }}
+            menu={{ items: userMenuItems, onClick: handleMenuClick }}
             placement="bottomRight"
             arrow
             trigger={["click"]}

@@ -1,6 +1,15 @@
-import type { GroupRole, TransactionType } from "../types";
+import type { GroupRole, SplitType, TransactionType } from "../types";
 
-type SplitType = "EQUAL" | "EXACT";
+export interface Group {
+  id: string;
+  name: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+  baseCurrency: string;
+  ownerId: string;
+  createdAt: string;
+}
 
 export interface GroupRequest {
   name: string;

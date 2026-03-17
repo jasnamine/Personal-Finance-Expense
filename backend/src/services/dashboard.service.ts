@@ -1,4 +1,3 @@
-
 import { Types } from "mongoose";
 import ExpenseModel from "../models/Expense.model";
 
