@@ -115,6 +115,12 @@ const GroupExpensesTab = ({ expenses, currency, members }: Props) => {
             setIsModalOpen(false);
             setEditingExpense(null);
             form.reset();
+            queryClient.invalidateQueries({
+              queryKey: ["group-detail", "getById", id],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["balances", "getById", id],
+            });
           },
         },
       );
@@ -124,7 +130,10 @@ const GroupExpensesTab = ({ expenses, currency, members }: Props) => {
           setIsModalOpen(false);
           form.reset();
           queryClient.invalidateQueries({
-            queryKey: ["group-detail", "get-by-id"],
+            queryKey: ["group-detail", "getById", id],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["balances", "getById", id],
           });
         },
       });
@@ -160,11 +169,17 @@ const GroupExpensesTab = ({ expenses, currency, members }: Props) => {
       queryClient.invalidateQueries({
         queryKey: ["group-detail", "getById", id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["balances", "getById", id],
+      });
     };
 
     const handleUpdate = () => {
       queryClient.invalidateQueries({
         queryKey: ["group-detail", "getById", id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["balances", "getById", id],
       });
     };
 
@@ -172,15 +187,11 @@ const GroupExpensesTab = ({ expenses, currency, members }: Props) => {
       queryClient.invalidateQueries({
         queryKey: ["group-detail", "getById", id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["balances", "getById", id],
+      });
     };
 
-    socket.on("expense-group:update", (data) => {
-      console.log("received update", data);
-
-      queryClient.invalidateQueries({
-        queryKey: ["group-detail", "getById"],
-      });
-    });
 
     socket.on("expense-group:add", handleAdd);
     socket.on("expense-group:update", handleUpdate);

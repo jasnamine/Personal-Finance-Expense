@@ -27,6 +27,7 @@ import type {
   GroupMemberRequest,
   GroupMemberResponse,
 } from "../../models/Group";
+import { useAuthStore } from "../../stores/authStore";
 import type { GroupRole } from "../../types";
 
 const { Text } = Typography;
@@ -51,6 +52,9 @@ const MemberForm = ({ members }: MemberFormProps) => {
       role: "VIEWER",
     },
   });
+  const { user } = useAuthStore();
+  const currentUserRole = members.find((m) => m.userId === user?.id)?.role;
+  const isOwner = currentUserRole === "OWNER";
 
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
@@ -93,6 +97,9 @@ const MemberForm = ({ members }: MemberFormProps) => {
           queryClient.invalidateQueries({
             queryKey: ["group-members", "getAll"],
           });
+          queryClient.invalidateQueries({
+            queryKey: ["group-detail", "getById", id],
+          });
         },
         onError: (err: any) => {
           NotifyUtils.error(
@@ -115,7 +122,10 @@ const MemberForm = ({ members }: MemberFormProps) => {
         onSuccess: () => {
           form.reset();
           queryClient.invalidateQueries({
-            queryKey: ["group-members", "get-by-id", id],
+            queryKey: ["group-members", "getById", id],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["group-detail", "getById", id],
           });
         },
         onError: (err: any) => {
@@ -129,81 +139,53 @@ const MemberForm = ({ members }: MemberFormProps) => {
   };
 
   const handleDelete = (userId: string) => {
-    deleteApi.mutate({
-      id,
-      requestBody: {
-        userId,
+    deleteApi.mutate(
+      {
+        id,
+        requestBody: { userId },
       },
-    });
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["group-members", "getById", id],
+          });
+
+          queryClient.invalidateQueries({
+            queryKey: ["group-detail", "getById", id],
+          });
+        },
+      },
+    );
   };
 
   useEffect(() => {
     if (!id) return;
 
-    // UPDATE
-    const handleUpdated = (updatedMember: GroupMember) => {
-      queryClient.setQueryData<GroupMemberResponse>(
-        ["group-members", "getById", id],
-        (oldData) => {
-          if (!oldData) return oldData;
-
-          return {
-            ...oldData,
-            data: {
-              ...oldData.data,
-              members: oldData.data.members.map((m) =>
-                m.userId === updatedMember.userId
-                  ? { ...m, ...updatedMember } 
-                  : m,
-              ),
-            },
-          };
-        },
-      );
+    const handleCreated = () => {
+      queryClient.invalidateQueries({
+        queryKey: ["group-detail", "getById", id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["group-members", "getById", id],
+      });
     };
 
-    // CREATE
-    const handleCreated = (newMember: GroupMember) => {
-      queryClient.setQueryData<GroupMemberResponse>(
-        ["group-members", "getById", id],
-        (oldData) => {
-          if (!oldData) return oldData;
-
-          const exists = oldData.data.members.some(
-            (m) => m.userId === newMember.userId,
-          );
-
-          if (exists) return oldData;
-
-          return {
-            ...oldData,
-            data: {
-              ...oldData.data,
-              members: [...oldData.data.members, newMember],
-            },
-          };
-        },
-      );
+    const handleUpdated = () => {
+      queryClient.invalidateQueries({
+        queryKey: ["group-detail", "getById", id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["group-members", "getById", id],
+      });
     };
 
-    // DELETE
-    const handleDeleted = (payload: { userId: string }) => {
-      queryClient.setQueryData<GroupMemberResponse>(
-        ["group-members", "getById", id],
-        (oldData) => {
-          if (!oldData) return oldData;
-
-          return {
-            ...oldData,
-            data: {
-              ...oldData.data,
-              members: oldData.data.members.filter(
-                (m) => m.userId !== payload.userId,
-              ),
-            },
-          };
-        },
-      );
+    const handleDeleted = () => {
+      queryClient.invalidateQueries({
+        queryKey: ["group-detail", "getById", id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["group-members", "getById", id],
+      });
     };
 
     socket.on("member:updated", handleUpdated);
@@ -247,8 +229,6 @@ const MemberForm = ({ members }: MemberFormProps) => {
       </div>
       <InputError error={form.formState.errors?.email?.message} />
 
-      {/* Tiền tệ cơ bản */}
-
       <label className="block mb-1 mt-2 font-medium">
         Danh sách thành viên ({members.length})
       </label>
@@ -267,23 +247,39 @@ const MemberForm = ({ members }: MemberFormProps) => {
                 </Text>
               </div>
             </Space>
-
             <Space size="small">
-              <Select<GroupRole>
-                size="small"
-                className="w-[150px]"
-                value={item.role}
-                onChange={(value) => handleChangeRole(item.userId, value)}
-              >
-                <Option value="OWNER">Chủ sở hữu</Option>
-                <Option value="EDITOR">Biên tập viên</Option>
-                <Option value="VIEWER">Người xem</Option>
-              </Select>
+              {/* LOGIC MỚI: Luôn hiện Role, nhưng chỉ Owner mới được chỉnh sửa */}
+              {isOwner ? (
+                <Select<GroupRole>
+                  size="small"
+                  className="w-[130px]"
+                  value={item.role}
+                  onChange={(value) => handleChangeRole(item.userId, value)}
+                >
+                  <Option value="OWNER">Chủ sở hữu</Option>
+                  {item.role !== "OWNER" && (
+                    <Option value="EDITOR">Biên tập viên</Option>
+                  )}
+                  {item.role !== "OWNER" && (
+                    <Option value="VIEWER">Người xem</Option>
+                  )}
+                </Select>
+              ) : (
+                /* Nếu không phải Owner, chỉ hiển thị nhãn (Tag) hoặc Text */
+                <div className="px-3 py-1 bg-gray-200/50 rounded-md text-[10px] text-gray-600 font-semibold uppercase">
+                  {item.role === "OWNER"
+                    ? "Chủ sở hữu"
+                    : item.role === "EDITOR"
+                      ? "Biên tập"
+                      : "Người xem"}
+                </div>
+              )}
 
-              {item.role !== "OWNER" && (
+              {/* Nút Xóa: Chỉ Owner mới nhìn thấy và không được xóa chính mình */}
+              {isOwner && item.role !== "OWNER" && (
                 <Popconfirm
                   title="Xóa thành viên?"
-                  description={`Xóa ${item.userId} khỏi nhóm?`}
+                  description={`Xóa ${item.email} khỏi nhóm?`}
                   onConfirm={() => handleDelete(item.userId)}
                   okText="Xóa"
                   cancelText="Hủy"
@@ -300,6 +296,20 @@ const MemberForm = ({ members }: MemberFormProps) => {
             </Space>
           </div>
         ))}
+      </div>
+      <div className="mt-6 pt-4 border-t border-gray-100 flex justify-center">
+        <Popconfirm
+          title="Rời khỏi nhóm?"
+          description="Bạn sẽ không còn truy cập được dữ liệu chi tiêu của nhóm này."
+          // onConfirm={handleLeaveGroup}
+          okText="Rời nhóm"
+          cancelText="Hủy"
+          okButtonProps={{ danger: true }}
+        >
+          <AppButton danger className="font-medium">
+            Rời khỏi nhóm này
+          </AppButton>
+        </Popconfirm>
       </div>
     </form>
   );

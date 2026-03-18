@@ -1,25 +1,34 @@
-import { ArrowRightOutlined, CalendarOutlined } from "@ant-design/icons";
+import {
+  ArrowRightOutlined,
+  CalendarOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import {
   Avatar,
   Badge,
   Button,
   Card,
   Col,
+  Popconfirm,
   Row,
+  Space,
   Tooltip,
   Typography,
 } from "antd";
-import type { GroupResponse } from "../../models/Group";
-import dayjs from "dayjs"; 
+import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import type { GroupResponse } from "../../models/Group";
 
 const { Text, Paragraph } = Typography;
 
 interface GroupListProps {
   groups: GroupResponse[];
+  onEditGroup: (data: GroupResponse) => void;
+  onDeleteGroup: (id: string) => void;
 }
 
-const GroupList = ({ groups }: GroupListProps) => {
+const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
   const formatDate = (date?: Date) => {
     if (!date) return "N/A";
     return dayjs(date).format("DD/MM/YYYY");
@@ -39,7 +48,7 @@ const GroupList = ({ groups }: GroupListProps) => {
                 padding: "16px",
                 display: "flex",
                 flexDirection: "column",
-                height: "100%"
+                height: "100%",
               },
             }}
           >
@@ -52,15 +61,35 @@ const GroupList = ({ groups }: GroupListProps) => {
               >
                 {group.name}
               </Text>
-              <Badge
-                count={`${group.members.length} người`}
-                style={{
-                  backgroundColor: "#f5f5f5",
-                  color: "#595959",
-                  fontSize: "11px",
-                  border: "none",
-                }}
-              />
+              <Space size={4}>
+                <Tooltip title="Chỉnh sửa">
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<EditOutlined className="text-blue-500" />}
+                    onClick={() => onEditGroup(group)}
+                  />
+                </Tooltip>
+                <Popconfirm
+                  title="Xóa nhóm"
+                  description="Bạn có chắc chắn muốn xóa nhóm này không?"
+                  onConfirm={() => onDeleteGroup(group._id)}
+                  onCancel={(e) => e?.stopPropagation()}
+                  okText="Xóa"
+                  cancelText="Hủy"
+                  okButtonProps={{ danger: true }}
+                >
+                  <Tooltip title="Xóa">
+                    <Button
+                      type="text"
+                      size="small"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </Tooltip>
+                </Popconfirm>
+              </Space>
             </div>
 
             {/* Description */}
@@ -69,7 +98,7 @@ const GroupList = ({ groups }: GroupListProps) => {
                 type="secondary"
                 className="text-xs italic line-clamp-2"
                 style={{
-                  minHeight: "32px", 
+                  minHeight: "32px",
                   marginBottom: 0,
                 }}
               >
@@ -86,13 +115,16 @@ const GroupList = ({ groups }: GroupListProps) => {
             </div>
 
             {/* Members Preview */}
-            <div className="flex items-center gap-2 mb-6">
+            <div className="flex items-center gap-2 mb-6 justify-between">
               <Avatar.Group
-                maxCount={3}
                 size="small"
-                maxStyle={{
-                  color: "#f56a00",
-                  backgroundColor: "#fde3cf",
+                max={{
+                  count: 3,
+                  style: {
+                    color: "#f56a00",
+                    backgroundColor: "#fde3cf",
+                    fontSize: "10px",
+                  },
                 }}
               >
                 {group.members.map((member, index) => (
@@ -113,6 +145,15 @@ const GroupList = ({ groups }: GroupListProps) => {
                   +{group.members.length - 3}
                 </Text>
               )}
+              <Badge
+                count={`${group.members.length} người`}
+                style={{
+                  backgroundColor: "#f5f5f5",
+                  color: "#595959",
+                  fontSize: "11px",
+                  border: "none",
+                }}
+              />
             </div>
 
             {/* Action */}

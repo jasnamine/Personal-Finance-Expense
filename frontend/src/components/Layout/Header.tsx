@@ -11,17 +11,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ResourceURL from "../../constants/ResourceURL";
 import { useAuthStore } from "../../stores/authStore";
+import { useSearchStore } from "../../stores/searchStore";
 
 const userMenuItems: MenuProps["items"] = [
   {
     key: "profile",
     label: "Hồ sơ của tôi",
     icon: <UserOutlined />,
-  },
-  {
-    key: "settings",
-    label: "Cài đặt",
-    icon: <SettingOutlined />,
   },
   {
     type: "divider",
@@ -79,6 +75,8 @@ const Header = () => {
   };
 
   const logout = useAuthStore((state) => state.logout);
+  const { keyword, setKeyword } = useSearchStore();
+  const [inputValue, setInputValue] = useState("");
 
   const handleMenuClick: MenuProps["onClick"] = async ({ key }) => {
     if (key == "logout") {
@@ -97,27 +95,25 @@ const Header = () => {
       <span className="font-bold text-[20px] tracking-tight text-indigo-600 whitespace-nowrap">
         Retrofin
       </span>
-      <div className="relative w-2xl hidden md:block">
+      <div className="relative w-md hidden md:block">
         <Search
           className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
           size={18}
         />
         <input
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setKeyword(inputValue);
+            }
+          }}
           className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm outline-none"
           placeholder="Tìm nhanh..."
         />
       </div>
 
       <div className="flex items-center gap-4">
-        <Tooltip placement="topRight" title={"Theme"}>
-          <button
-            onClick={toggleDark}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800"
-          >
-            {dark ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-        </Tooltip>
-
         <Space size={20}>
           {/* Dropdown Avatar */}
           <Dropdown

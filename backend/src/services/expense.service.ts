@@ -30,7 +30,7 @@ export const getExpenses = async (
     type,
     search,
     page = 1,
-    limit = 10,
+    limit = 5,
   } = query;
 
   const filter: any = { createdBy: userId, groupId: null };

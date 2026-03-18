@@ -74,14 +74,14 @@ const GroupForm = ({ form }: GroupFormProps) => {
         )}
       />
 
-      <label className="block mb-1 font-medium">Tiền tệ cơ bản</label>
+      <label className="block mt-2 mb-1 font-medium">Tiền tệ cơ bản</label>
       <Controller
         name="baseCurrency"
         control={form.control}
         render={({ field }) => (
           <Select
             {...field}
-            className="w-full mt-1" // mt-1 để tạo khoảng cách nhỏ với text phía trên
+            className="w-full" // mt-1 để tạo khoảng cách nhỏ với text phía trên
             size="large"
             loading={loadingCurrencies}
             showSearch
@@ -91,9 +91,9 @@ const GroupForm = ({ form }: GroupFormProps) => {
         )}
       />
 
-      <Row gutter={16} className="mt-4">
+      <Row gutter={16}>
         <Col span={12}>
-          <label className="block mb-1 font-medium">Ngày bắt đầu</label>
+          <label className="block mt-2 mb-1 font-medium">Ngày bắt đầu</label>
           <Controller
             name="startDate"
             control={form.control}
@@ -115,7 +115,7 @@ const GroupForm = ({ form }: GroupFormProps) => {
         </Col>
 
         <Col span={12}>
-          <label className="block mb-1 font-medium">Ngày kết thúc</label>
+          <label className="block mt-2 mb-1 font-medium">Ngày kết thúc</label>
           <Controller
             name="endDate"
             control={form.control}
@@ -137,7 +137,9 @@ const GroupForm = ({ form }: GroupFormProps) => {
         </Col>
       </Row>
 
-      <label className="block mb-1 font-medium">Mô tả (không bắt buộc)</label>
+      <label className="block mt-2 mb-1 font-medium">
+        Mô tả
+      </label>
       <Controller
         name="description"
         control={form.control}

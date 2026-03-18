@@ -8,11 +8,13 @@ import AppCard from "../../components/Card/AppCard";
 import Filter from "../../components/Filter/Filter";
 import AppModal from "../../components/Modal/AppModal";
 import ResourceURL from "../../constants/ResourceURL";
+import useDeleteByIdApi from "../../hooks/usde-delete-by-id-api";
 import useCreateApi from "../../hooks/use-create-api";
 import useGetAllApi from "../../hooks/use-get-all-api";
 import useUpdateApi from "../../hooks/use-update-api";
 import type { CategoryResponse } from "../../models/Category";
 import type { ExpenseRequest, ExpenseResponse } from "../../models/Expense";
+import { useSearchStore } from "../../stores/searchStore";
 import type { TransactionType } from "../../types";
 import ExpenseForm from "./ExpenseForm";
 import ExpenseList from "./ExpenseList";
@@ -34,9 +36,12 @@ const Expense = () => {
     endDate: string;
   } | null>(null);
   const [page, setPage] = useState(1);
+
   const [editingExpense, setEditingExpense] = useState<ExpenseResponse | null>(
     null,
   );
+
+  const { keyword } = useSearchStore();
 
   const queryClient = useQueryClient();
 
@@ -61,6 +66,7 @@ const Expense = () => {
     {
       page,
       size: 10,
+      search: keyword || undefined,
       categoryId: filterCategory || undefined,
       type: filterType || undefined,
       startDate: rangeDate?.startDate,
@@ -71,13 +77,21 @@ const Expense = () => {
   const createApi = useCreateApi<ExpenseRequest, ExpenseResponse>(
     ResourceURL.EXPENSE,
   );
+
   const updateApi = useUpdateApi<
     ExpenseRequest & { id: string },
     ExpenseResponse
   >(ResourceURL.EXPENSE, "expenses");
 
+  const deleteApi = useDeleteByIdApi(ResourceURL.EXPENSES, "expenses");
+
   const categoriesList = data?.data ?? [];
   const expenseList = expenses?.data ?? [];
+  const total = expenses?.totalElements ?? 0;
+
+  useEffect(() => {
+    setPage(1);
+  }, [keyword]);
 
   useEffect(() => {
     if (editingExpense) {
@@ -115,7 +129,7 @@ const Expense = () => {
   };
 
   const handleDeleteExpense = (id: string) => {
-    console.log(id);
+    deleteApi.mutate(id);
   };
 
   const handleEditExpense = (expense: ExpenseResponse) => {
@@ -157,6 +171,9 @@ const Expense = () => {
           />
           <ExpenseList
             expenses={expenseList}
+            page={page}
+            total={total}
+            onChangePage={(p) => setPage(p)}
             onEditExpense={handleEditExpense}
             onDeleteExpense={handleDeleteExpense}
           />

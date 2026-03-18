@@ -40,4 +40,29 @@ const deleteMember = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(response);
 });
 
-export { addMember, deleteMember, getMembersByGroupId, updateMemberRole };
+const leaveGroup = asyncHandler(async (req: Request, res: Response) => {
+  const { groupId } = req.params as { groupId: string };
+
+  const userId = req.user?.id;
+
+  if (!groupId) {
+    return res.status(400).json({ message: "Group ID is required" });
+  }
+
+  if (!userId) {
+    return res.status(401).json({ message: "User not authenticated" });
+  }
+
+  const response = await groupMemberService.leaveGroup(groupId, userId);
+
+  return res.status(200).json(response);
+});
+
+// Thêm vào danh sách export
+export {
+  addMember,
+  deleteMember,
+  getMembersByGroupId,
+  leaveGroup,
+  updateMemberRole,
+};

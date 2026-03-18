@@ -6,11 +6,17 @@ import { useAuthStore } from "../../stores/authStore";
 
 interface ExpenseListProps {
   expenses: ExpenseResponse[];
+  page: number;
+  total: number;
+  onChangePage: (page: number) => void;
   onEditExpense: (data: ExpenseResponse) => void;
   onDeleteExpense: (id: string) => void;
 }
 const ExpenseList = ({
   expenses,
+  page,
+  total,
+  onChangePage,
   onEditExpense,
   onDeleteExpense,
 }: ExpenseListProps) => {
@@ -21,6 +27,12 @@ const ExpenseList = ({
     <Table
       dataSource={expenses}
       rowKey="_id"
+      pagination={{
+        current: page,
+        pageSize: 5,
+        total: total,
+        onChange: onChangePage,
+      }}
       columns={[
         {
           title: "",

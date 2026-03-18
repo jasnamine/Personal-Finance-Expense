@@ -1,4 +1,4 @@
-import { DatePicker, Input, InputNumber, Segmented, Select } from "antd";
+import { DatePicker, InputNumber, Segmented, Select } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { Controller, type UseFormReturn } from "react-hook-form";
@@ -116,6 +116,7 @@ const SettleForm = ({ form, members, debts }: Props) => {
           <InputNumber
             {...field}
             className="w-full"
+            style={{ width: "100%" }}
             placeholder="Nhập số tiền"
           />
         )}

@@ -12,7 +12,7 @@ import useCreateApi from "../../hooks/use-create-api";
 import useGetAllApi from "../../hooks/use-get-all-api";
 import useUpdateApi from "../../hooks/use-update-api";
 import type { CategoryRequest, CategoryResponse } from "../../models/Category";
-import CategoryAdd from "./CategoryAdd";
+import CategoryForm from "./CategoryForm";
 import CategoryList from "./CategoryList";
 export const categorySchema = z.object({
   name: z.string().min(1, "Vui lòng nhập tên danh mục!"),
@@ -115,7 +115,7 @@ const Category = () => {
         onSubmit={form.handleSubmit(handleSubmit)}
         onClose={() => setIsModalOpen(false)}
       >
-        <CategoryAdd form={form} />
+        <CategoryForm form={form} />
       </AppModal>
     </Content>
   );

@@ -27,6 +27,7 @@ const GroupDetail = () => {
 
   const member = membersData?.data?.members ?? [];
 
+
   if (isLoading) return <Skeleton />;
 
   if (!data) return <Empty />;

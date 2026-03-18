@@ -54,7 +54,7 @@ const ExpenseGroupForm = ({ form, members }: Props) => {
 
   return (
     <form className="space-y-4">
-      <label className="block mb-1 ">Mô tả</label>
+      <label className="block mb-1 font-medium">Mô tả</label>
       <Controller
         name="description"
         control={form.control}
@@ -73,6 +73,7 @@ const ExpenseGroupForm = ({ form, members }: Props) => {
         render={({ field }) => (
           <InputNumber
             {...field}
+            style={{ width: "100%" }}
             className="w-full"
             placeholder="Nhập số tiền"
           />

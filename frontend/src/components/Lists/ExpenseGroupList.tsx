@@ -18,13 +18,13 @@ interface Props {
   onDeleteGroupExpense: (id: string) => void;
 }
 
-
 const ExpenseGroupList = ({
   expenses,
   currency,
   onEditGroupExpense,
   onDeleteGroupExpense,
-}: Props) => {
+}: Props) =>
+{
   return (
     <div className="space-y-3 w-full gap-2">
       {expenses.map((expense) => (

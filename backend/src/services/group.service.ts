@@ -121,7 +121,6 @@ const getGroupById = async (userId: string, groupId: string) => {
     .populate("createdBy", "email")
     .lean();
 
-
   const formattedExpenses = expenses.map((e: any) => ({
     _id: e._id.toString(),
     amount: e.amount,
@@ -193,4 +192,53 @@ const deleteGroup = async (userId: string, groupId: string) => {
   };
 };
 
-export { createGroup, deleteGroup, getGroupById, getUserGroups };
+const updateGroup = async (
+  userId: string,
+  groupId: string,
+  updateData: Partial<IGroup>,
+) => {
+  // 1. Kiểm tra quyền hạn: Chỉ Owner mới được update group
+  const member = await GroupMember.findOne({ userId, groupId });
+
+  if (!member) {
+    throw new NotFoundException(
+      "Không tìm thấy thông tin thành viên trong nhóm",
+    );
+  }
+
+  if (member.role !== GROUP_ROLE.OWNER) {
+    throw new ForbiddenException(
+      "Chỉ chủ sở hữu nhóm mới có quyền chỉnh sửa thông tin",
+    );
+  }
+
+  // 2. Lọc các field cho phép update để tránh ghi đè dữ liệu quan trọng (như ownerId)
+  const { name, description, startDate, endDate, baseCurrency } = updateData;
+
+  const updatePayload: any = {};
+  if (name !== undefined) updatePayload.name = name.trim();
+  if (description !== undefined) updatePayload.description = description.trim();
+  if (startDate !== undefined) updatePayload.startDate = new Date(startDate);
+  if (endDate !== undefined) updatePayload.endDate = new Date(endDate);
+  if (baseCurrency !== undefined) updatePayload.baseCurrency = baseCurrency;
+
+  // 3. Thực hiện update
+  const updatedGroup = await Group.findByIdAndUpdate(
+    groupId,
+    { $set: updatePayload },
+    { new: true, runValidators: true }, // new: true để trả về object sau khi đã update
+  );
+
+  if (!updatedGroup) {
+    throw new NotFoundException("Nhóm không tồn tại");
+  }
+
+  return {
+    message: "Cập nhật thông tin nhóm thành công",
+    data: updatedGroup,
+  };
+};
+
+export { createGroup, deleteGroup, getGroupById, getUserGroups, updateGroup };
+
+

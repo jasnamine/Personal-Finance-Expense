@@ -9,5 +9,6 @@ router.get("/:groupId", groupMemberController.getMembersByGroupId);
 router.post("/", groupMemberController.addMember);
 router.put("/:groupId", groupMemberController.updateMemberRole);
 router.delete("/:groupId", groupMemberController.deleteMember);
+router.delete("/leave-group/:groupId", groupMemberController.leaveGroup);
 
 export default router;

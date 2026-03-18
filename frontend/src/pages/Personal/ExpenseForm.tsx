@@ -1,9 +1,9 @@
 import { DatePicker, Input, InputNumber, Select } from "antd";
+import dayjs from "dayjs";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import ReceiptUpload from "../../components/Upload/ReceiptUpload";
 import type { CategoryResponse } from "../../models/Category";
 import type { ExpenseRequest } from "../../models/Expense";
-import dayjs from "dayjs";
 
 interface IncomeFormProps {
   form: UseFormReturn<ExpenseRequest>;
@@ -18,7 +18,12 @@ const ExpenseForm = ({ form, categories }: IncomeFormProps) => {
         name="amount"
         control={form.control}
         render={({ field }) => (
-          <InputNumber {...field} placeholder="Số tiền" size="large" />
+          <InputNumber
+            {...field}
+            placeholder="Số tiền"
+            size="large"
+            style={{ width: "100%" }}
+          />
         )}
       />
 

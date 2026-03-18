@@ -8,7 +8,7 @@ interface CategoryAddProps {
   form: UseFormReturn<CategoryRequest>;
 }
 
-const CategoryAdd = ({ form }: CategoryAddProps) => {
+const CategoryForm = ({ form }: CategoryAddProps) => {
   return (
     <form>
       <EmojiPickerPopup
@@ -52,4 +52,4 @@ const CategoryAdd = ({ form }: CategoryAddProps) => {
   );
 };
 
-export default CategoryAdd;
+export default CategoryForm;

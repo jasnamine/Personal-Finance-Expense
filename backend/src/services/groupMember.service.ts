@@ -48,7 +48,9 @@ const addMember = async (groupId: string, email: string, role: string) => {
     role,
   });
 
-  const memberData = await newMember.populate<{ userId: { _id: Types.ObjectId; email: string } }>("userId", "email");
+  const memberData = await newMember.populate<{
+    userId: { _id: Types.ObjectId; email: string };
+  }>("userId", "email");
 
   return {
     message: "Member added successfully",
@@ -72,7 +74,10 @@ const updateMemberRole = async (
     },
     { role: newRole },
     { new: true },
-  ).populate<{ userId: { _id: Types.ObjectId; email: string } }>("userId", "email");
+  ).populate<{ userId: { _id: Types.ObjectId; email: string } }>(
+    "userId",
+    "email",
+  );
 
   if (!updateMember) {
     throw new ForbiddenException("Member not found in the group");
@@ -114,4 +119,48 @@ const deleteMember = async (groupId: string, memberId: string) => {
   };
 };
 
-export { addMember, deleteMember, getMembersByGroupId, updateMemberRole };
+const leaveGroup = async (groupId: string, userId: string) => {
+  // 1. Tìm member đang thực hiện yêu cầu
+  const currentMember = await GroupMemberModel.findOne({
+    groupId: new Types.ObjectId(groupId),
+    userId: new Types.ObjectId(userId),
+  });
+
+  if (!currentMember) {
+    throw new ForbiddenException("Bạn không phải là thành viên của nhóm này");
+  }
+
+  // 2. Nếu là OWNER, kiểm tra xem có ai khác cũng là OWNER không
+  if (currentMember.role === "OWNER") {
+    const otherOwner = await GroupMemberModel.findOne({
+      groupId: new Types.ObjectId(groupId),
+      userId: { $ne: new Types.ObjectId(userId) }, // Không phải là chính mình ($ne: Not Equal)
+      role: "OWNER",
+    });
+
+    if (!otherOwner) {
+      throw new ForbiddenException(
+        "Bạn là chủ nhóm duy nhất. Hãy chuyển quyền OWNER cho thành viên khác trước khi rời nhóm!",
+      );
+    }
+  }
+
+  // 3. Nếu vượt qua các bước check trên thì cho phép xóa khỏi nhóm
+  await GroupMemberModel.deleteOne({
+    groupId: new Types.ObjectId(groupId),
+    userId: new Types.ObjectId(userId),
+  });
+
+  return {
+    message: "Rời nhóm thành công",
+    data: { groupId, userId },
+  };
+};
+
+export {
+  addMember,
+  deleteMember,
+  getMembersByGroupId,
+  updateMemberRole,
+  leaveGroup,
+};
