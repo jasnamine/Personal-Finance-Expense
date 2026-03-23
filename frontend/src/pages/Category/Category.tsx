@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import AppCard from "../../components/Card/AppCard";
+import CategoryForm from "../../components/Form/CategoryForm";
+import CategoryList from "../../components/List/CategoryList";
 import AppModal from "../../components/Modal/AppModal";
 import ResourceURL from "../../constants/ResourceURL";
 import useDeleteByIdApi from "../../hooks/usde-delete-by-id-api";
@@ -12,14 +14,12 @@ import useCreateApi from "../../hooks/use-create-api";
 import useGetAllApi from "../../hooks/use-get-all-api";
 import useUpdateApi from "../../hooks/use-update-api";
 import type { CategoryRequest, CategoryResponse } from "../../models/Category";
-import CategoryForm from "./CategoryForm";
-import CategoryList from "./CategoryList";
 export const categorySchema = z.object({
-  name: z.string().min(1, "Vui lòng nhập tên danh mục!"),
+  name: z.string().min(1, "Please enter a category name!"),
   type: z.enum(["INCOME", "EXPENSE"], {
-    message: "Phải chọn loại hợp lệ!",
+    message: "Please select a valid type!",
   }),
-  icon: z.string().optional(),
+  icon: z.string().min(1, "Please select icon!"),
 });
 
 const Category = () => {
@@ -51,7 +51,6 @@ const Category = () => {
   >(ResourceURL.CATEGORY, "categories");
 
   const deleteApi = useDeleteByIdApi(ResourceURL.CATEGORY, "categories");
-  
 
   const handleSubmit = (data: CategoryRequest) => {
     if (category) {
@@ -91,11 +90,10 @@ const Category = () => {
     deleteApi.mutate(id);
   };
 
-
   return (
     <Content>
       <AppCard
-        title={"Danh mục"}
+        title={"Categories"}
         onClick={() => {
           setCategory(undefined);
           form.reset({ name: "", type: "EXPENSE", icon: "" });
@@ -110,7 +108,7 @@ const Category = () => {
       </AppCard>
 
       <AppModal
-        title={category ? "Cập nhật danh mục" : "Thêm danh mục"}
+        title={category ? "Update Category" : "Add Category"}
         isOpen={isModalOpen}
         onSubmit={form.handleSubmit(handleSubmit)}
         onClose={() => setIsModalOpen(false)}

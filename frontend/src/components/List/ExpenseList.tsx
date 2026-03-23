@@ -47,12 +47,12 @@ const ExpenseList = ({
           ),
         },
         {
-          title: "Danh mục",
+          title: "Category",
           dataIndex: "categoryId",
           render: (category) => <p>{category?.name}</p>,
         },
         {
-          title: "Loại giao dịch",
+          title: "Transaction type",
           dataIndex: "categoryId",
           render: (category) => (
             <Tag
@@ -64,17 +64,17 @@ const ExpenseList = ({
           ),
         },
         {
-          title: "Số tiền",
+          title: "Amount",
           dataIndex: "amount",
           render: (a) => <p> {formatCurrency(a || 0, currency)}</p>,
         },
         {
-          title: "Mô tả",
+          title: "Description",
           dataIndex: "description",
           render: (d) => <p>{d}</p>,
         },
         {
-          title: "Hành động",
+          title: "Action",
           render: (_, expense: ExpenseResponse) => (
             <Space>
               <Button
@@ -83,7 +83,8 @@ const ExpenseList = ({
                 onClick={() => onEditExpense(expense)}
               />
               <Popconfirm
-                title="Xóa chi tiêu này?"
+                title="Delete Transaction"
+                description="Are you sure you want to delete this record?"
                 onConfirm={() => onDeleteExpense(expense._id)}
               >
                 <Button type="text" danger icon={<DeleteOutlined />} />

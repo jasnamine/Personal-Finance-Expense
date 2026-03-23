@@ -54,7 +54,6 @@ const loginUser = async (
   if (oldRefreshToken) {
     const refreshToken = oldRefreshToken;
 
-    // Kiểm tra xem token có tồn tại không (reuse detection)
     const tokenExists = tokenArray.includes(refreshToken);
 
     if (!tokenExists) {
@@ -62,7 +61,6 @@ const loginUser = async (
     }
   }
 
-  // Thêm token mới vào mảng
   const finalTokens = [...newRefreshTokenArray, newRefreshToken];
   await redisClient.set(redisKey, JSON.stringify(finalTokens), {
     EX: 60 * 60 * 24,
@@ -103,7 +101,6 @@ const handleRefreshToken = async (req: Request) => {
     throw new UnauthorizedException("Refresh token reuse detected");
   }
 
-  // Loại bỏ token cũ
   const newRefreshTokenArray = tokenArray.filter((rt) => rt !== refreshToken);
   const newRefreshToken = await signRefreshtoken(userId);
   const newAccessToken = await signAccesstoken(userId);
@@ -134,19 +131,15 @@ const logout = async (req: Request) => {
 
   const redisKey = `refreshToken:${userId}`;
 
-  // Lấy danh sách token từ Redis
   const storedTokens = await redisClient.get(redisKey);
   let tokenArray: string[] = storedTokens ? JSON.parse(storedTokens) : [];
 
-  //Nếu token có trong Redis → xoá nó
   if (tokenArray.includes(refreshToken)) {
     const newTokens = tokenArray.filter((rt) => rt !== refreshToken);
 
     if (newTokens.length === 0) {
-      // Nếu không còn token nào → xoá luôn key
       await redisClient.del(redisKey);
     } else {
-      // Nếu còn token khác → cập nhật lại Redis
       await redisClient.set(redisKey, JSON.stringify(newTokens), {
         EX: 60 * 60 * 24,
       });

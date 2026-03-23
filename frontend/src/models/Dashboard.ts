@@ -19,3 +19,17 @@ export interface DashboardResponse {
     total: number;
   }[];
 }
+
+
+export interface CategoryStat {
+  _id: string;   
+  total: number; 
+}
+
+export interface MonthlyStat {
+  month: string;  
+  income: number;
+  expense: number;
+}
+
+

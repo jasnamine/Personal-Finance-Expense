@@ -16,14 +16,17 @@ import type { CategoryResponse } from "../../models/Category";
 import type { ExpenseRequest, ExpenseResponse } from "../../models/Expense";
 import { useSearchStore } from "../../stores/searchStore";
 import type { TransactionType } from "../../types";
-import ExpenseForm from "./ExpenseForm";
-import ExpenseList from "./ExpenseList";
+import ExpenseForm from "../../components/Form/ExpenseForm";
+import ExpenseList from "../../components/List/ExpenseList";
 
 export const expenseSchema = z.object({
   description: z.string().optional(),
-  amount: z.number().min(1).max(10000000000, "Không hợp lệ"),
-  categoryId: z.string("Vui lòng chọn danh mục!"),
-  date: z.date().min(1, "Vui lòng chọn ngày!"),
+  amount: z
+    .number()
+    .min(1, "Amount must be greater than 0")
+    .max(10000000000, "Amount too large"),
+  categoryId: z.string().min(1, "Please select a category!"),
+  date: z.date().min(1, "Please select a date!"),
   receiptUrl: z.string().optional(),
 });
 
@@ -50,8 +53,8 @@ const Expense = () => {
     defaultValues: {
       description: "",
       amount: 0,
-      categoryId: "Chọn danh mục",
-      date: new Date(),
+      categoryId: undefined,
+      date: undefined,
     },
   });
 
@@ -140,14 +143,14 @@ const Expense = () => {
   return (
     <Content>
       <AppCard
-        title={"Danh sách giao dịch"}
+        title={"Transaction History"}
         onClick={() => {
           setEditingExpense(null);
           form.reset({
             description: "",
             amount: 0,
             categoryId: undefined,
-            date: new Date(),
+            date: undefined,
           });
           setIsModalOpen(true);
         }}
@@ -180,7 +183,7 @@ const Expense = () => {
         </section>
       </AppCard>
       <AppModal
-        title={editingExpense ? "Chỉnh sửa giao dịch" : "Thêm giao dịch"}
+        title={editingExpense ? "Edit Transaction" : "Add Transaction"}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={form.handleSubmit(handleSubmit)}

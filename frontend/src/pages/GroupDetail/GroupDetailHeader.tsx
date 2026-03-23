@@ -18,7 +18,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import AppModal from "../../components/Modal/AppModal";
 import type { GroupDetailResponse } from "../../models/Group";
-import MemberForm from "./MemberForm";
+import MemberForm from "../../components/Form/MemberForm";
 import { formatCurrency } from "../../utils/formatCurrency";
 
 interface GroupDetailProps {
@@ -38,7 +38,7 @@ const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
               {group.group.name}
             </Title>
             <Badge
-              count={group.members?.length + " người"}
+              count={group.members?.length + " members"}
               style={{ backgroundColor: "#f0f0f0", color: "#595959" }}
             />
           </div>
@@ -61,14 +61,13 @@ const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
             className="rounded-lg h-10"
             onClick={() => setIsMemberModalOpen(true)}
           >
-            Quản lý thành viên
+            Manage Members
           </Button>
         </div>
       </div>
 
       <Divider className="my-6" />
 
-      {/* Stats Row */}
       <Row gutter={[24, 24]}>
         <Col xs={24} sm={8}>
           <div className="flex items-center gap-4 p-4 rounded-xl bg-red-50/50 border border-red-100">
@@ -78,7 +77,7 @@ const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
             <Statistic
               title={
                 <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">
-                  Tổng chi tiêu
+                  Total Spending
                 </span>
               }
               value={group.totalExpense}
@@ -103,11 +102,11 @@ const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
             <Statistic
               title={
                 <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">
-                  Thành viên
+                  Members
                 </span>
               }
               value={group.members?.length || 4}
-              suffix="người"
+              suffix="people"
               styles={{
                 content: {
                   fontSize: "1.25rem",
@@ -126,7 +125,7 @@ const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
             <Statistic
               title={
                 <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">
-                  Giao dịch
+                  Transactions
                 </span>
               }
               value={group.expenses?.length || 0}
@@ -145,7 +144,7 @@ const GroupDetailHeader = ({ group, members }: GroupDetailProps) => {
       <AppModal
         isOpen={isMemberModalOpen}
         onClose={() => setIsMemberModalOpen(false)}
-        title="Quản lý thành viên"
+        title="Manage Members"
         onSubmit={handleSubmit}
         isFooterVisible={false}
       >

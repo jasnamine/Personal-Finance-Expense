@@ -6,13 +6,15 @@ import {
 import { Button, Card, Popconfirm, Space, Typography } from "antd";
 import dayjs from "dayjs";
 import { TrendingDown } from "lucide-react";
-import type { GroupExpenseResponse } from "../../models/Group";
+import type { GroupExpenseResponse, GroupMember } from "../../models/Group";
+import { useAuthStore } from "../../stores/authStore";
 import { formatCurrency } from "../../utils/formatCurrency";
 
 const { Text } = Typography;
 
 interface Props {
   expenses: GroupExpenseResponse[];
+  members: GroupMember[];
   currency: string;
   onEditGroupExpense: (data: GroupExpenseResponse) => void;
   onDeleteGroupExpense: (id: string) => void;
@@ -21,10 +23,14 @@ interface Props {
 const ExpenseGroupList = ({
   expenses,
   currency,
+  members,
   onEditGroupExpense,
   onDeleteGroupExpense,
-}: Props) =>
-{
+}: Props) => {
+  const { user } = useAuthStore();
+  const currentUserRole = members.find((m) => m.userId === user?.id)?.role;
+  const isOwner = currentUserRole === "OWNER";
+  const isEditor = currentUserRole === "EDITOR";
   return (
     <div className="space-y-3 w-full gap-2">
       {expenses.map((expense) => (
@@ -51,10 +57,10 @@ const ExpenseGroupList = ({
                 <span>{dayjs(expense.date).format("DD/MM/YYYY")}</span>
                 <span>•</span>
                 <span className="max-w-[100px] truncate">
-                  {expense.paidBy || "Unknown"} trả
+                  {expense.paidBy || "Unknown"} paid
                 </span>
                 <span>•</span>
-                <span>Chia {expense.splits?.length || 0} người</span>
+                <span>Split between {expense.splits?.length || 0}</span>
               </div>
             </div>
           </div>
@@ -64,20 +70,23 @@ const ExpenseGroupList = ({
               {formatCurrency(expense.amount || 0, currency)}
             </Text>
 
-            <Space>
-              <Button
-                type="text"
-                onClick={() => onEditGroupExpense(expense)}
-                icon={<EditOutlined />}
-                className="text-gray-400 hover:text-blue-500"
-              />
-              <Popconfirm
-                title="Xóa chi tiêu này?"
-                onConfirm={() => onDeleteGroupExpense(expense._id)}
-              >
-                <Button type="text" danger icon={<DeleteOutlined />} />
-              </Popconfirm>
-            </Space>
+            {(isOwner || isEditor) && (
+              <Space>
+                <Button
+                  type="text"
+                  onClick={() => onEditGroupExpense(expense)}
+                  icon={<EditOutlined />}
+                  className="text-gray-400 hover:text-blue-500"
+                />
+                <Popconfirm
+                  title="Delete expense"
+                  description="Are you sure you want to delete this expense?"
+                  onConfirm={() => onDeleteGroupExpense(expense._id)}
+                >
+                  <Button type="text" danger icon={<DeleteOutlined />} />
+                </Popconfirm>
+              </Space>
+            )}
           </div>
         </Card>
       ))}

@@ -8,14 +8,12 @@ import {
 import AppLayout from "./components/Layout/Layout";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
-import VerifyOtp from "./pages/Auth/VerifyOtp";
 import Category from "./pages/Category/Category";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Missing from "./pages/Errors/Missing";
 import NotFound from "./pages/Errors/NotFound";
 import Unauthorized from "./pages/Errors/Unauthorized";
 import Group from "./pages/Group/Group";
-
 import GroupDetail from "./pages/GroupDetail/GroupDetail";
 import Expense from "./pages/Personal/Expense";
 import Profile from "./pages/Profile/Profile";
@@ -27,8 +25,6 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/verify-otp" element={<VerifyOtp />} />
-
         <Route path="/" element={<ProtectedRoute />}>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Navigate to="/dashboard" />} />

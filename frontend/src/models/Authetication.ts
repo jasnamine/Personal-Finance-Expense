@@ -33,4 +33,10 @@ export interface User {
   createdAt: string;
 }
 
+export interface ProfileForm {
+  username: string;
+  email: string;
+  currency: string;
+}
+
 

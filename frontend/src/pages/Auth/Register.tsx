@@ -1,9 +1,4 @@
-import {
-  GoogleOutlined,
-  LockOutlined,
-  MailOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Card, Typography } from "antd";
@@ -26,13 +21,20 @@ const { Title, Text } = Typography;
 
 const registerSchema = z
   .object({
-    username: z.string().min(6, "Tối thiểu 6 ký tự"),
-    email: z.string().email("Email không hợp lệ"),
-    password: z.string().min(6, "Tối thiểu 6 ký tự"),
-    confirmPassword: z.string().min(6, "Tối thiểu 6 ký tự"),
+    username: z
+      .string()
+      .min(3, "Username must be at least 3 characters long")
+      .max(30, "Username cannot exceed 30 characters"),
+    email: z.string().email("Invalid email format"),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters long")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number"),
+    confirmPassword: z.string().min(6, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Mật khẩu xác nhận không khớp",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
@@ -56,7 +58,7 @@ const Register = () => {
   >({
     mutationFn: (data) => publicApi.post(ResourceURL.REGISTER, data),
     onSuccess: () => {
-      NotifyUtils.success("Đăng ký thành công!Chuyển đến trang đăng nhập...");
+      NotifyUtils.success("Registration successful! Redirecting to login");
       form.reset();
       setTimeout(() => {
         navigate("/login");
@@ -64,7 +66,7 @@ const Register = () => {
     },
     onError: (err: any) => {
       NotifyUtils.error(
-        err.response.data.message || "Đăng ký thất bại. Vui lòng thử lại.",
+        err.response.data.message || "Registration failed. Please try again.",
       );
     },
   });
@@ -145,24 +147,12 @@ const Register = () => {
           <InputError error={form.formState.errors.confirmPassword?.message} />
 
           <AppButton type="primary" htmlType="submit" block>
-            Đăng ký
+            Register
           </AppButton>
 
-          {/* Link to login */}
           <div style={{ textAlign: "center", marginTop: 16 }}>
-            Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+            Already have an account? <Link to="/login">Sign in</Link>
           </div>
-
-          {/* Google register */}
-          <AppButton
-            icon={<GoogleOutlined />}
-            size="large"
-            block
-            centerContent
-            style={{ marginTop: 12 }}
-          >
-            Đăng nhập với Google
-          </AppButton>
         </form>
       </Card>
     </div>

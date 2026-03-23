@@ -2,12 +2,12 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
+import http from "http";
 import { config } from "./config/app.config";
 import connectDatabase from "./config/database.config";
 import { connectRedis } from "./config/redis.config";
 import { errorHandler } from "./middlewares/errorHandler.middeware";
 import setupRoutes from "./routes/index.route";
-import http from "http";
 import { initSocket } from "./socket";
 
 const app = express();
@@ -40,13 +40,7 @@ connectRedis();
 const server = http.createServer(app);
 initSocket(server);
 server.listen(config.PORT, async () => {
-    console.log(
-      `Server listening on port ${config.PORT} in ${config.NODE_ENV}`,
-    );
-    await connectDatabase();
+  console.log(`Server listening on port ${config.PORT} in ${config.NODE_ENV}`);
+  await connectDatabase();
 });
 
-// app.listen(config.PORT, async () => {
-//   console.log(`Server listening on port ${config.PORT} in ${config.NODE_ENV}`);
-//   await connectDatabase();
-// });

@@ -31,13 +31,15 @@ axiosPrivate.interceptors.response.use(
 
     if (err.response?.status === 403 && !prev._retry) {
       prev._retry = true;
+      try {
+        const newToken = await refreshToken();
+        prev.headers.Authorization = `Bearer ${newToken}`;
 
-      const newToken = await refreshToken();
-      // console.log(newToken)
-      // useAuthStore.getState().setAuth({ accessToken: newToken });
-      prev.headers.Authorization = `Bearer ${newToken}`;
-
-      return axiosPrivate(prev);
+        return axiosPrivate(prev);
+      } catch (error) {
+        useAuthStore.getState().logout();
+        window.location.href = "/login";
+      }
     }
 
     return Promise.reject(err);

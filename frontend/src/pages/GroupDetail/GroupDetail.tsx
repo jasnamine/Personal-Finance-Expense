@@ -1,7 +1,7 @@
 import { Empty, Skeleton, Tabs } from "antd";
 import { useParams } from "react-router-dom";
-import BalanceTab from "../../components/Tabs/BalanceTab";
-import GroupExpensesTab from "../../components/Tabs/GroupExpensesTab";
+import BalanceTab from "../../components/Tab/BalanceTab";
+import GroupExpensesTab from "../../components/Tab/GroupExpensesTab";
 import ResourceURL from "../../constants/ResourceURL";
 import useGetById from "../../hooks/use-get-by-id";
 import type {
@@ -38,7 +38,7 @@ const GroupDetail = () => {
         items={[
           {
             key: "expenses",
-            label: "Chi tiêu",
+            label: "Expenses",
             children: (
               <GroupExpensesTab
                 expenses={data?.expenses ?? []}
@@ -49,7 +49,7 @@ const GroupDetail = () => {
           },
           {
             key: "balances",
-            label: "Số dư",
+            label: "Balances",
             children: (
               <BalanceTab
                 members={data.members ?? []}

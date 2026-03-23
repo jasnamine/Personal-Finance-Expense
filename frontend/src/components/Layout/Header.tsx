@@ -1,22 +1,19 @@
-import {
-  LogoutOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { Dropdown, Space, Tooltip, type MenuProps } from "antd";
 import Avatar from "antd/es/avatar";
 import axios from "axios";
-import { Moon, Search, Sun } from "lucide-react";
+import { Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ResourceURL from "../../constants/ResourceURL";
 import { useAuthStore } from "../../stores/authStore";
 import { useSearchStore } from "../../stores/searchStore";
+import { getInitials } from "../../utils/getInitials";
 
 const userMenuItems: MenuProps["items"] = [
   {
     key: "profile",
-    label: "Hồ sơ của tôi",
+    label: "My profile",
     icon: <UserOutlined />,
   },
   {
@@ -24,38 +21,20 @@ const userMenuItems: MenuProps["items"] = [
   },
   {
     key: "logout",
-    label: "Đăng xuất",
+    label: "Logout",
     icon: <LogoutOutlined />,
     danger: true,
   },
 ];
 
 const Header = () => {
-  const [dark, setDark] = useState(false);
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const { accessToken } = useAuthStore();
 
-  const toggleDark = () => {
-    setDark(!dark);
-    document.documentElement.classList.toggle("dark");
-  };
-
   if (!user) {
     return null;
   }
-
-  const getInitials = (name: string | undefined): string => {
-    if (!name) return "??";
-
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-
-    const firstLetter = parts[0].charAt(0);
-    const lastLetter = parts[parts.length - 1].charAt(0);
-
-    return (firstLetter + lastLetter).toUpperCase();
-  };
 
   const logoutApi = async () => {
     try {
@@ -75,7 +54,7 @@ const Header = () => {
   };
 
   const logout = useAuthStore((state) => state.logout);
-  const { keyword, setKeyword } = useSearchStore();
+  const { setKeyword } = useSearchStore();
   const [inputValue, setInputValue] = useState("");
 
   const handleMenuClick: MenuProps["onClick"] = async ({ key }) => {
@@ -109,7 +88,7 @@ const Header = () => {
             }
           }}
           className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm outline-none"
-          placeholder="Tìm nhanh..."
+          placeholder="Search..."
         />
       </div>
 
@@ -128,7 +107,7 @@ const Header = () => {
                   style={{ backgroundColor: "red", verticalAlign: "middle" }}
                   size="small"
                 >
-                  {getInitials(user?.username)}
+                  {getInitials(user?.email)}
                 </Avatar>
                 <span className="hidden md:inline-block text-sm font-medium">
                   {user?.username}

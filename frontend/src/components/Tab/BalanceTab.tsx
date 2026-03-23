@@ -11,10 +11,12 @@ import useGetById from "../../hooks/use-get-by-id";
 import { socket } from "../../lib/socket";
 import type { GroupMember } from "../../models/Group";
 import type { Balance, Debt, SettleRequest } from "../../models/Settlement";
-import SettleForm from "../../pages/GroupDetail/SettleForm";
 import AppCard from "../Card/AppCard";
 import MemberBalanceCard from "../Card/MemberBalanceCard";
+import SettleForm from "../Form/SettleForm";
 import AppModal from "../Modal/AppModal";
+import { useAuthStore } from "../../stores/authStore";
+import type { GroupRole } from "../../types";
 
 interface Props {
   members: GroupMember[];
@@ -22,9 +24,9 @@ interface Props {
 }
 
 export const SettleSchema = z.object({
-  fromUserId: z.string().min(1, "Chọn người trả"),
-  toUserId: z.string().min(1, "Chọn người nhận"),
-  amount: z.number().positive("Số tiền phải lớn hơn 0"),
+  fromUserId: z.string().min(1, "Please select the payer"),
+  toUserId: z.string().min(1, "Please select the receiver"),
+  amount: z.number().positive("Amount must be greater than 0"),
   method: z.string().optional(),
   date: z.date(),
 });
@@ -36,13 +38,16 @@ const BalanceTab = ({ members, currency }: Props) => {
   const form = useForm<SettleRequest>({
     resolver: zodResolver(SettleSchema),
     defaultValues: {
-      fromUserId: "",
-      toUserId: "",
+      fromUserId: undefined,
+      toUserId: undefined,
       amount: 0,
       method: "cash",
-      date: new Date(),
+      date: undefined,
     },
   });
+  const { user } = useAuthStore();
+  const currentUserRole = members.find((m) => m.userId === user?.id)
+    ?.role as GroupRole;
 
   const { data: balances } = useGetById<ListResponse<Balance>>(
     ResourceURL.BALANCE,
@@ -101,17 +106,18 @@ const BalanceTab = ({ members, currency }: Props) => {
       socket.off("settlement:created");
     };
   }, [id]);
-  
+
   return (
     <AppCard
-      title="Số dư từng thành viên"
+      title="Member Balances"
+      role={currentUserRole}
       onClick={() => {
         setIsModalOpen(true);
       }}
     >
       <div className="flex justify-between mb-6">
         <AppModal
-          title={"Ghi nhận thanh toán thành viên"}
+          title="Record Member Payment"
           isOpen={isModalOpen}
           onSubmit={form.handleSubmit(handleSubmit)}
           onClose={() => setIsModalOpen(false)}

@@ -6,7 +6,7 @@ import {
   updateExpenseSchema,
   expenseQuerySchema,
 } from "../validation/expense.validation";
-import * as expenseController from "../controllers/expense.controller";
+import  expenseController from "../controllers/expense.controller";
 
 const router = Router();
 

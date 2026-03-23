@@ -10,11 +10,11 @@ const useCreateApi = <I, O>(resourceURL: string) => {
       privateApi.post<I, O>(resourceURL, requestBody),
 
     onSuccess: () => {
-      NotifyUtils.success("Tạo thành công");
+      NotifyUtils.success("Create Successfully");
     },
 
     onError: (err) => {
-      NotifyUtils.error(err?.message || "Tạo không thành công");
+      NotifyUtils.error(err?.message || "Create failed");
     },
   });
 };

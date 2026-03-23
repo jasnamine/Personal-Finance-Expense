@@ -46,7 +46,7 @@ export const getExpenses = async (
 
   if (type) {
     if (!Object.values(TRANSACTION_TYPE).includes(type)) {
-      throw new BadRequestException("Type phải là INCOME hoặc EXPENSE");
+      throw new BadRequestException("Type must be INCOME or EXPENSE");
     }
     filter.type = type;
   }
@@ -72,6 +72,7 @@ export const getExpenses = async (
   const totalPages = Math.ceil(total / limitNum);
 
   return {
+    message: "Expenses fetched successfully",
     data: expenses,
     page: pageNum,
     size: limitNum,

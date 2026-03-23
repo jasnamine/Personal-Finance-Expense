@@ -10,9 +10,9 @@ interface MissingProps {
 }
 
 export default function Missing({
-  title = "Thiếu thông tin",
-  description = "Bạn cần hoàn tất bước này để tiếp tục",
-  actionLabel = "Thực hiện ngay",
+  title = "Missing Information",
+  description = "You need to complete this step to continue",
+  actionLabel = "Action Now",
   actionPath = "/",
 }: MissingProps) {
   const navigate = useNavigate();

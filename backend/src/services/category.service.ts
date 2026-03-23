@@ -1,5 +1,6 @@
 import { TransactionType } from "../enums/TransactionType.enum";
 import Category from "../models/Category.model";
+import ExpenseModel from "../models/Expense.model";
 import { BadRequestException, NotFoundException } from "../utils/appError";
 
 const getAllCategories = async (userId: string) => {
@@ -63,6 +64,8 @@ const deleteCategory = async (userId: string, categoryId: string) => {
     if (!category) {
       throw new NotFoundException("Category not found");
     }
+
+    await ExpenseModel.deleteMany({ categoryId: categoryId });
 
     await Category.deleteOne({ userId, _id: categoryId });
 

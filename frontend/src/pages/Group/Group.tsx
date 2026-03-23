@@ -13,15 +13,15 @@ import useCreateApi from "../../hooks/use-create-api";
 import useGetAllApi from "../../hooks/use-get-all-api";
 import useUpdateApi from "../../hooks/use-update-api";
 import type { GroupRequest, GroupResponse } from "../../models/Group";
-import GroupForm from "./GroupForm";
-import GroupList from "./GroupList";
+import GroupForm from "../../components/Form/GroupForm";
+import GroupList from "../../components/List/GroupList";
 
 export const groupSchema = z.object({
-  name: z.string().min(1, "Vui lòng nhập tên nhóm!"),
+  name: z.string().min(1, "Please enter a group name!"),
   description: z.string().optional(),
-  startDate: z.date(),
-  endDate: z.date(),
-  baseCurrency: z.string(),
+  startDate: z.date("Start date is required"),
+  endDate: z.date("End date is required"),
+  baseCurrency: z.string().min(1, "Please select a base currency"),
 });
 
 const Group = () => {
@@ -110,7 +110,7 @@ const Group = () => {
   return (
     <Content>
       <AppCard
-        title={"Nhóm của bạn"}
+        title={"Your Groups"}
         onClick={() => {
           setEditingGroup(null);
           form.reset({
@@ -126,13 +126,13 @@ const Group = () => {
         <section>
           <GroupList
             groups={groupList}
-            onEditGroup={handleEditGroup} 
-            onDeleteGroup={handleDeleteGroup} 
+            onEditGroup={handleEditGroup}
+            onDeleteGroup={handleDeleteGroup}
           />
         </section>
       </AppCard>
       <AppModal
-        title={editingGroup ? "Chỉnh sửa nhóm" : "Thêm nhóm"}
+        title={editingGroup ? "Edit Group" : "Add New Group"}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={form.handleSubmit(handleSubmit)}

@@ -1,26 +1,31 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Card } from "antd";
 import AppButton from "../Button/AppButton";
+import type { GroupRole } from "../../types";
 interface AppCardProps {
   onClick: () => void;
   title: string;
   children: React.ReactElement;
+  role?: GroupRole;
 }
 
-const AppCard = ({ onClick, title, children }: AppCardProps) => {
+const AppCard = ({ onClick, title, children, role }: AppCardProps) => {
+ const canCreate = !role || role === "OWNER" || role === "EDITOR";
   return (
     <Card
       title={title}
       className="shadow-sm border-none"
       extra={
-        <AppButton
-          icon={<PlusOutlined />}
-          type="primary"
-          block
-          onClick={onClick}
-        >
-          Thêm mới
-        </AppButton>
+        canCreate && (
+          <AppButton
+            icon={<PlusOutlined />}
+            type="primary"
+            block
+            onClick={onClick}
+          >
+            Add New
+          </AppButton>
+        )
       }
     >
       {children}

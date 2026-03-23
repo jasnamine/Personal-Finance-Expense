@@ -2,22 +2,28 @@ import { Request, Response } from "express";
 import * as dashboardService from "../services/dashboard.service";
 import { BadRequestException } from "../utils/appError";
 
-export const getDashboard = async (req: Request, res: Response) => {
+const getDashboard = async (req: Request, res: Response) => {
   const userId = req.user?.id;
   if (!userId) {
-    throw new BadRequestException("No userId");
+    throw new BadRequestException("User ID is missing in request");
   }
 
-  const summary = await dashboardService.getDashboard(userId);
-  const categoryStats = await dashboardService.getExpenseByCategory(userId);
-  const monthlyStats = await dashboardService.getMonthlyStats(userId);
+  const [summary, categoryStats, monthlyStats] = await Promise.all([
+    dashboardService.getDashboard(userId),
+    dashboardService.getExpenseByCategory(userId),
+    dashboardService.getMonthlyStats(userId),
+  ]);
 
   res.json({
-    message: "Fetch dashboar successfully",
+    message: "Fetch dashboard successfully",
     data: {
       summary,
       categoryStats,
       monthlyStats,
     },
   });
+};
+
+export default {
+  getDashboard,
 };

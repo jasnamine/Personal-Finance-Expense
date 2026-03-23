@@ -38,7 +38,7 @@ const AppBreadcrumb = () => {
       let name = breadcrumbNameMap[url] || snippet;
 
       if (id && snippet === id) {
-        name = groupName || "Chi tiết nhóm";
+        name = groupName || "Group detail";
       }
 
       const isLast = index === pathSnippets.length - 1;
@@ -56,7 +56,7 @@ const AppBreadcrumb = () => {
 
   const breadcrumbItems = [
     {
-      title: <Link to="/dashboard">Trang chủ</Link>,
+      title: <Link to="/dashboard">Dashboard</Link>,
       key: "home",
     },
     ...(extraBreadcrumbItems as any[]),

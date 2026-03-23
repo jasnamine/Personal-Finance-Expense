@@ -106,7 +106,6 @@ export const calculateGroupBalances = (
     }
   }
 
-  // apply settlements
   for (const s of settlements) {
     const from = s.fromUserId.toString();
     const to = s.toUserId.toString();

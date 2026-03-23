@@ -1,131 +1,83 @@
-import { Col, DatePicker, Input, Row, Select } from "antd";
+import { Col, DatePicker, Input, message, Row, Select } from "antd";
 import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import type { GroupRequest } from "../../models/Group";
-import { useEffect, useState } from "react";
+import {
+  fetchCurrencyOptions,
+  type CurrencyOption,
+} from "../../utils/currency";
+import InputError from "../Input/InputError";
 
 interface GroupFormProps {
   form: UseFormReturn<GroupRequest>;
-}
-
-interface CurrencyOption {
-  value: string;
-  label: string;
-  searchLabel: string;
 }
 
 const GroupForm = ({ form }: GroupFormProps) => {
   const [currencies, setCurrencies] = useState<CurrencyOption[]>([]);
   const [loadingCurrencies, setLoadingCurrencies] = useState(false);
   useEffect(() => {
-    const fetchCurrencies = async () => {
+    const loadData = async () => {
       setLoadingCurrencies(true);
-
       try {
-        const response = await fetch(
-          "https://restcountries.com/v3.1/all?fields=currencies,name",
-        );
-
-        const data = await response.json();
-
-        const currencyMap: Record<string, any> = {};
-
-        data.forEach((country: any) => {
-          if (country.currencies) {
-            Object.entries(country.currencies).forEach(
-              ([code, details]: any) => {
-                if (!currencyMap[code]) {
-                  currencyMap[code] = {
-                    code,
-                    name: details.name,
-                    country: country.name.common,
-                  };
-                }
-              },
-            );
-          }
-        });
-
-        const options: CurrencyOption[] = Object.values(currencyMap)
-          .sort((a: any, b: any) => a.code.localeCompare(b.code))
-          .map((item: any) => ({
-            value: item.code,
-            label: `${item.code} - ${item.country} (${item.name})`,
-            searchLabel: `${item.code} ${item.country} ${item.name}`,
-          }));
-
+        const options = await fetchCurrencyOptions();
         setCurrencies(options);
       } catch {
+        message.error("Failed to load currency list");
       } finally {
         setLoadingCurrencies(false);
       }
     };
-
-    fetchCurrencies();
+    loadData();
   }, []);
   return (
     <form>
-      <label className="block mb-1 font-medium">Tên nhóm</label>
+      <label className="block mb-1 font-medium">Group Name</label>
       <Controller
         name="name"
         control={form.control}
+        rules={{ required: "Group name is required" }}
         render={({ field }) => (
-          <Input {...field} placeholder="Tên nhóm" size="large" />
+          <Input
+            {...field}
+            placeholder="e.g. Thailand Trip 2026, Roommates..."
+            size="large"
+          />
         )}
       />
+      <InputError error={form?.formState?.errors?.name?.message} />
 
-      <label className="block mt-2 mb-1 font-medium">Tiền tệ cơ bản</label>
+      <label className="block mt-2 mb-1 font-medium">Base Currency</label>
       <Controller
         name="baseCurrency"
         control={form.control}
+        rules={{ required: "Please select a currency" }}
         render={({ field }) => (
           <Select
             {...field}
-            className="w-full" // mt-1 để tạo khoảng cách nhỏ với text phía trên
+            className="w-full"
             size="large"
             loading={loadingCurrencies}
             showSearch
             options={currencies}
-            placeholder="Chọn tiền tệ"
+            placeholder="Select primary currency"
           />
         )}
       />
-
+      <InputError error={form?.formState?.errors?.baseCurrency?.message} />
       <Row gutter={16}>
         <Col span={12}>
-          <label className="block mt-2 mb-1 font-medium">Ngày bắt đầu</label>
+          <label className="block mt-2 mb-1 font-medium">Start Date</label>
           <Controller
             name="startDate"
             control={form.control}
-            rules={{ required: "Ngày bắt đầu là bắt buộc" }}
+            rules={{ required: "Start date is required" }}
             render={({ field }) => (
               <>
                 <DatePicker
                   className="w-full"
                   size="large"
-                  placeholder="Chọn ngày bắt đầu"
-                  value={field.value ? dayjs(field.value) : null}
-                  onChange={(date) =>
-                    field.onChange(date ? date.toDate() : null)
-                  }
-                />
-              </>
-            )}
-          />
-        </Col>
-
-        <Col span={12}>
-          <label className="block mt-2 mb-1 font-medium">Ngày kết thúc</label>
-          <Controller
-            name="endDate"
-            control={form.control}
-            rules={{ required: "Ngày kết thúc là bắt buộc" }}
-            render={({ field }) => (
-              <>
-                <DatePicker
-                  className="w-full"
-                  size="large"
-                  placeholder="Chọn ngày kết thúc"
+                  placeholder="Pick date"
                   value={field.value ? dayjs(field.value) : null}
                   onChange={(date) =>
                     field.onChange(date ? date.toDate() : null)
@@ -136,17 +88,41 @@ const GroupForm = ({ form }: GroupFormProps) => {
           />
         </Col>
       </Row>
+      <InputError error={form?.formState?.errors?.startDate?.message} />
 
-      <label className="block mt-2 mb-1 font-medium">
-        Mô tả
-      </label>
+      <Row gutter={16}>
+        <Col span={12}>
+          <label className="block mt-2 mb-1 font-medium">End Date</label>
+          <Controller
+            name="endDate"
+            control={form.control}
+            rules={{ required: "End date is required" }}
+            render={({ field }) => (
+              <>
+                <DatePicker
+                  className="w-full"
+                  size="large"
+                  placeholder="Pick date"
+                  value={field.value ? dayjs(field.value) : null}
+                  onChange={(date) =>
+                    field.onChange(date ? date.toDate() : null)
+                  }
+                />
+              </>
+            )}
+          />
+        </Col>
+      </Row>
+      <InputError error={form?.formState?.errors?.endDate?.message} />
+
+      <label className="block mt-2 mb-1 font-medium">Description</label>
       <Controller
         name="description"
         control={form.control}
         render={({ field }) => (
           <Input.TextArea
             {...field}
-            placeholder="Mô tả ngắn gọn về nhóm..."
+            placeholder="Brief description about the group..."
             rows={3}
             size="large"
           />

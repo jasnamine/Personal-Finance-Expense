@@ -1,6 +1,5 @@
 import type { AxiosInstance } from "axios";
 
-// Thay vì interface, hãy dùng type
 export type RequestParams = {
   page?: number;
   size?: number;

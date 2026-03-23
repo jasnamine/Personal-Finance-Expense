@@ -8,14 +8,6 @@ class ResourceURL {
   static REGISTER = apiPath + "/auth/register";
   static LOGOUT = apiPath + "/auth/logout";
 
-  static REGISTRATION_RESEND_TOKEN = (userId: number) =>
-    apiPath + `/auth/registration/${userId}/resend-token`;
-  static CLIENT_REGISTRATION_CONFIRM = apiPath + "/auth/registration/confirm";
-  static REGISTRATION_CHANGE_EMAIL = (userId: number) =>
-    apiPath + `/auth/registration/${userId}/change-email`;
-  static FORGOT_PASSWORD = apiPath + "/auth/forgot-password";
-  static RESET_PASSWORD = apiPath + "/auth/reset-password";
-
   // USER
   static USER = apiPath + "/user/";
 
@@ -27,7 +19,10 @@ class ResourceURL {
 
   // GROUP MEMBER
   static GROUP_MEMBER = apiPath + "/group-members";
+  static GROUP_MEMBER_LEAVE = apiPath + "/group-members/leave-group";
   static BALANCE = apiPath + "/balances";
+
+  // SETTLEMENT
   static SETTLEMENT = apiPath + "/settlements";
   static SETTLEMENT_CREATE = (groupId: string) =>
     apiPath + `/settlements/${groupId}`;
@@ -44,7 +39,7 @@ class ResourceURL {
   static EXPENSES = apiPath + "/expenses";
 
   // DASHBOARD
-  static DASHBOARD = apiPath + "/dashboard"
+  static DASHBOARD = apiPath + "/dashboard";
 }
 
 export default ResourceURL;

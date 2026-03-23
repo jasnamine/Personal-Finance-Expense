@@ -12,6 +12,6 @@ export const validate =
       });
       next();
     } catch (error) {
-      next(error); // để errorHandler xử lý ZodError
+      next(error); 
     }
   };

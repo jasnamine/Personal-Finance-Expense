@@ -14,14 +14,14 @@ const useUpdateApi = <I extends { id: string }, O>(
       privateApi.update<Omit<I, "id">, O>(resourceURL, id, body),
 
     onSuccess: () => {
-      NotifyUtils.success("Cập nhật thành công");
+      NotifyUtils.success("Update successfully");
       void queryClient.invalidateQueries({
         queryKey: [resourceKey],
       });
     },
 
     onError: (err) => {
-      NotifyUtils.error(err?.message || "Cập nhật không thành công");
+      NotifyUtils.error(err?.message || "Update failed");
     },
   });
 };

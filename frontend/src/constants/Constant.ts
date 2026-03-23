@@ -1,10 +1,10 @@
 export const breadcrumbNameMap: Record<string, string> = {
-  "/dashboard": "Bảng điều khiển",
-  "/category": "Danh mục",
-  "/personal": "Cá nhân",
-  "/profile": "Hồ sơ cá nhân",
-  "/group": "Nhóm",
-  "/group/group-detail": "Chi tiết nhóm",
+  "/dashboard": "Dashboard",
+  "/category": "Categories",
+  "/personal": "Personal",
+  "/profile": "Profile",
+  "/group": "Group",
+  "/group/group-detail": "Group detail",
 };
 
 export const COLORS = [

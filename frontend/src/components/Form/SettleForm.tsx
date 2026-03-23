@@ -31,8 +31,8 @@ const SettleForm = ({ form, members, debts }: Props) => {
         value={mode}
         onChange={(v) => setMode(v as "suggest" | "manual")}
         options={[
-          { label: "Theo gợi ý", value: "suggest" },
-          { label: "Tự nhập", value: "manual" },
+          { label: "Suggested", value: "suggest" },
+          { label: "Manual Entry", value: "manual" },
         ]}
       />
       <div className="space-y-2">
@@ -68,7 +68,7 @@ const SettleForm = ({ form, members, debts }: Props) => {
 
       {mode === "manual" && (
         <>
-          <label className="block mb-1 font-medium">Người trả</label>
+          <label className="block mb-1 font-medium">Paid by</label>
           <Controller
             name="fromUserId"
             control={form.control}
@@ -76,7 +76,7 @@ const SettleForm = ({ form, members, debts }: Props) => {
               <Select
                 {...field}
                 className="w-full"
-                placeholder="Chọn người trả"
+                placeholder="Who is paying?"
                 options={members.map((m) => ({
                   value: m.userId,
                   label: m.email,
@@ -87,7 +87,7 @@ const SettleForm = ({ form, members, debts }: Props) => {
           <InputError error={form.formState.errors.fromUserId?.message} />
 
           {/* To User */}
-          <label className="block mb-1 font-medium">Người nhận</label>
+          <label className="block mb-1 font-medium">Receiver</label>
           <Controller
             name="toUserId"
             control={form.control}
@@ -95,7 +95,7 @@ const SettleForm = ({ form, members, debts }: Props) => {
               <Select
                 {...field}
                 className="w-full"
-                placeholder="Chọn người nhận"
+                placeholder="Who receives?"
                 options={members.map((m) => ({
                   value: m.userId,
                   label: m.email,
@@ -108,7 +108,7 @@ const SettleForm = ({ form, members, debts }: Props) => {
       )}
 
       {/* Amount */}
-      <label className="block mb-1 mt-2 font-medium">Số tiền</label>
+      <label className="block mb-1 mt-2 font-medium">Amount</label>
       <Controller
         name="amount"
         control={form.control}
@@ -117,14 +117,14 @@ const SettleForm = ({ form, members, debts }: Props) => {
             {...field}
             className="w-full"
             style={{ width: "100%" }}
-            placeholder="Nhập số tiền"
+            placeholder="Enter amount"
           />
         )}
       />
       <InputError error={form.formState.errors.amount?.message} />
 
       {/* Method */}
-      <label className="block mb-1 mt-2 font-medium">Phương thức</label>
+      <label className="block mb-1 mt-2 font-medium">Method</label>
       <Controller
         name="method"
         control={form.control}
@@ -133,24 +133,25 @@ const SettleForm = ({ form, members, debts }: Props) => {
             {...field}
             className="w-full"
             options={[
-              { value: "cash", label: "Tiền mặt" },
-              { value: "bank", label: "Chuyển khoản" },
+              { value: "cash", label: "Cash" },
+              { value: "bank", label: "Bank Transfer" },
               { value: "momo", label: "MoMo" },
               { value: "zalopay", label: "ZaloPay" },
-              { value: "other", label: "Khác" },
+              { value: "other", label: "Other" },
             ]}
           />
         )}
       />
 
       {/* Date */}
-      <label className="block mb-1 mt-2 font-medium">Ngày thanh toán</label>
+      <label className="block mb-1 mt-2 font-medium">Payment Date</label>
       <Controller
         name="date"
         control={form.control}
         render={({ field }) => (
           <DatePicker
             className="w-full"
+            placeholder="Select date"
             value={field.value ? dayjs(field.value) : null}
             onChange={(d) => field.onChange(d?.toDate())}
           />

@@ -11,7 +11,7 @@ const useDeleteApi = <I>(resourceURL: string, resourceKey: string) => {
       privateApi.delete<I>(resourceURL, id, requestBody),
 
     onSuccess: () => {
-      NotifyUtils.success("Xóa thành công");
+      NotifyUtils.success("Delete successfully");
 
       void queryClient.invalidateQueries({
         queryKey: [resourceKey],
@@ -19,7 +19,7 @@ const useDeleteApi = <I>(resourceURL: string, resourceKey: string) => {
     },
 
     onError: (err) => {
-      NotifyUtils.error(err?.message || "Xóa không thành công");
+      NotifyUtils.error(err?.message || "Delete failed");
     },
   });
 };

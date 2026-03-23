@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import z from "zod";
 import AppButton from "../../components/Button/AppButton";
 import InputError from "../../components/Input/InputError";
@@ -38,7 +38,7 @@ interface MemberFormProps {
 }
 
 export const memberSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
+  email: z.string().email("Invalid email address"),
   role: z.enum(["OWNER", "EDITOR", "VIEWER"]),
 });
 
@@ -55,6 +55,10 @@ const MemberForm = ({ members }: MemberFormProps) => {
   const { user } = useAuthStore();
   const currentUserRole = members.find((m) => m.userId === user?.id)?.role;
   const isOwner = currentUserRole === "OWNER";
+  const hasOtherOwner = members.some(
+    (m) => m.role === "OWNER" && m.userId !== user?.id,
+  );
+  const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
@@ -77,6 +81,11 @@ const MemberForm = ({ members }: MemberFormProps) => {
 
   const deleteApi = useDeleteApi<GroupMember>(
     ResourceURL.GROUP_MEMBER,
+    "group-members",
+  );
+
+  const leaveGroupApi = useDeleteApi<GroupMember>(
+    ResourceURL.GROUP_MEMBER_LEAVE,
     "group-members",
   );
 
@@ -103,8 +112,7 @@ const MemberForm = ({ members }: MemberFormProps) => {
         },
         onError: (err: any) => {
           NotifyUtils.error(
-            err.response?.data?.message ||
-              "Cập nhật thất bại! Vui lòng thử lại",
+            err.response?.data?.message || "Update failed! Please try again.",
           );
         },
       },
@@ -130,8 +138,7 @@ const MemberForm = ({ members }: MemberFormProps) => {
         },
         onError: (err: any) => {
           NotifyUtils.error(
-            err.response?.data?.message ||
-              "Đăng nhập thất bại! Vui lòng thử lại.",
+            err.response?.data?.message || "Failed to add member.",
           );
         },
       },
@@ -153,6 +160,31 @@ const MemberForm = ({ members }: MemberFormProps) => {
           queryClient.invalidateQueries({
             queryKey: ["group-detail", "getById", id],
           });
+        },
+      },
+    );
+  };
+
+  const handleLeaveGroup = () => {
+    if (!user?.id) return;
+
+    leaveGroupApi.mutate(
+      {
+        id: id!,
+        requestBody: { userId: user.id },
+      },
+      {
+        onSuccess: () => {
+          NotifyUtils.success("You have left the group.");
+          navigate("/group");
+          queryClient.invalidateQueries({
+            queryKey: ["groups", "getAll"],
+          });
+        },
+        onError: (err: any) => {
+          NotifyUtils.error(
+            err.response?.data?.message || "Error leaving group.",
+          );
         },
       },
     );
@@ -201,9 +233,7 @@ const MemberForm = ({ members }: MemberFormProps) => {
 
   return (
     <form onSubmit={form.handleSubmit(handleAddMember)}>
-      <label className="block mb-1 font-medium ">
-        Thêm thành viên vào nhóm
-      </label>
+      <label className="block mb-1 font-medium ">Add Member to Group</label>
       <div className="flex gap-2">
         <Controller
           name="email"
@@ -212,7 +242,7 @@ const MemberForm = ({ members }: MemberFormProps) => {
             <Input
               {...field}
               prefix={<UserAddOutlined className="text-gray-400" />}
-              placeholder="Nhập email hoặc tên người dùng..."
+              placeholder="Enter email"
               size="large"
               className="rounded-lg h-10"
             />
@@ -224,13 +254,13 @@ const MemberForm = ({ members }: MemberFormProps) => {
           type="primary"
           htmlType="submit"
         >
-          Thêm
+          Add
         </AppButton>
       </div>
       <InputError error={form.formState.errors?.email?.message} />
 
       <label className="block mb-1 mt-2 font-medium">
-        Danh sách thành viên ({members.length})
+        Member List ({members.length})
       </label>
       <div className="space-y-2">
         {members.map((item) => (
@@ -248,41 +278,34 @@ const MemberForm = ({ members }: MemberFormProps) => {
               </div>
             </Space>
             <Space size="small">
-              {/* LOGIC MỚI: Luôn hiện Role, nhưng chỉ Owner mới được chỉnh sửa */}
               {isOwner ? (
                 <Select<GroupRole>
                   size="small"
-                  className="w-[130px]"
+                  className="w-[120px]"
                   value={item.role}
                   onChange={(value) => handleChangeRole(item.userId, value)}
                 >
-                  <Option value="OWNER">Chủ sở hữu</Option>
+                  <Option value="OWNER">Owner</Option>
                   {item.role !== "OWNER" && (
-                    <Option value="EDITOR">Biên tập viên</Option>
+                    <Option value="EDITOR">Editor</Option>
                   )}
                   {item.role !== "OWNER" && (
-                    <Option value="VIEWER">Người xem</Option>
+                    <Option value="VIEWER">Viewer</Option>
                   )}
                 </Select>
               ) : (
-                /* Nếu không phải Owner, chỉ hiển thị nhãn (Tag) hoặc Text */
                 <div className="px-3 py-1 bg-gray-200/50 rounded-md text-[10px] text-gray-600 font-semibold uppercase">
-                  {item.role === "OWNER"
-                    ? "Chủ sở hữu"
-                    : item.role === "EDITOR"
-                      ? "Biên tập"
-                      : "Người xem"}
+                  {item.role}
                 </div>
               )}
 
-              {/* Nút Xóa: Chỉ Owner mới nhìn thấy và không được xóa chính mình */}
               {isOwner && item.role !== "OWNER" && (
                 <Popconfirm
-                  title="Xóa thành viên?"
-                  description={`Xóa ${item.email} khỏi nhóm?`}
+                  title="Remove member?"
+                  description={`Are you sure you want to remove ${item.email}?`}
                   onConfirm={() => handleDelete(item.userId)}
-                  okText="Xóa"
-                  cancelText="Hủy"
+                  okText="Remove"
+                  cancelText="Cancel"
                   okButtonProps={{ danger: true }}
                 >
                   <Button
@@ -299,16 +322,32 @@ const MemberForm = ({ members }: MemberFormProps) => {
       </div>
       <div className="mt-6 pt-4 border-t border-gray-100 flex justify-center">
         <Popconfirm
-          title="Rời khỏi nhóm?"
-          description="Bạn sẽ không còn truy cập được dữ liệu chi tiêu của nhóm này."
-          // onConfirm={handleLeaveGroup}
-          okText="Rời nhóm"
-          cancelText="Hủy"
-          okButtonProps={{ danger: true }}
+          title={
+            isOwner && !hasOtherOwner ? "Cannot leave group" : "Leave Group?"
+          }
+          description={
+            isOwner && !hasOtherOwner
+              ? "You are the only owner. Please transfer ownership before leaving."
+              : "You will no longer have access to this group's expense data."
+          }
+          onConfirm={() => {
+            if (isOwner && !hasOtherOwner) {
+              NotifyUtils.info("Please transfer OWNER role first!");
+              return;
+            }
+            handleLeaveGroup();
+          }}
+          okText={isOwner && !hasOtherOwner ? "Understood" : "Leave Group"}
+          cancelText="Cancel"
+          okButtonProps={{ danger: true, disabled: isOwner && !hasOtherOwner }}
         >
-          <AppButton danger className="font-medium">
-            Rời khỏi nhóm này
-          </AppButton>
+          <Button
+            danger
+            ghost
+            className="font-medium text-xs rounded-lg hover:opacity-80"
+          >
+            Leave this group
+          </Button>
         </Popconfirm>
       </div>
     </form>

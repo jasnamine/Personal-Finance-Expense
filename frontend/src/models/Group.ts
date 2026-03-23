@@ -4,8 +4,8 @@ export interface Group {
   id: string;
   name: string;
   description?: string;
-  startDate?: string;
-  endDate?: string;
+  startDate?: Date;
+  endDate?: Date;
   baseCurrency: string;
   ownerId: string;
   createdAt: string;

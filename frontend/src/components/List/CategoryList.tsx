@@ -1,7 +1,8 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { List, Space } from "antd";
-import AppButton from "../../components/Button/AppButton";
+import { List, Popconfirm, Space, Typography, Tooltip } from "antd";
 import type { CategoryResponse } from "../../models/Category";
+import AppButton from "../Button/AppButton";
+const { Text } = Typography;
 
 interface CategoryListProps {
   categories: CategoryResponse[];
@@ -42,12 +43,32 @@ const CategoryList = ({
                 icon={<EditOutlined />}
                 className="w-2 h-2 flex items-center justify-center bg-blue-50 rounded"
               />
-              <AppButton
-                shape="circle"
-                onClick={() => onDeleteCategory(category._id)}
-                icon={<DeleteOutlined />}
-                className="w-6 h-6 flex items-center justify-center bg-red-50 rounded"
-              />
+              <Popconfirm
+                title="Delete Category?"
+                description={
+                  <div className="max-w-[220px]">
+                    Are you sure you want to delete{" "}
+                    <strong>{category.name}</strong>?
+                    <br />
+                    <Text type="danger" className="text-[12px] mt-1 block">
+                      Warning: All associated transactions will also be deleted!
+                    </Text>
+                  </div>
+                }
+                onConfirm={() => onDeleteCategory(category._id)}
+                okText="Yes, Delete"
+                cancelText="No, Keep it"
+                okButtonProps={{ danger: true, size: "middle" }}
+                cancelButtonProps={{ size: "middle" }}
+              >
+                <Tooltip title="Delete Category">
+                  <AppButton
+                    shape="circle"
+                    icon={<DeleteOutlined className="text-red-500" />}
+                    className="w-8 h-8 flex items-center justify-center bg-red-50 hover:bg-red-100 border-none transition-colors"
+                  />
+                </Tooltip>
+              </Popconfirm>
             </section>
           </List.Item>
         )}

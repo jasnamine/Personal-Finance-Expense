@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 class NotifyUtils {
   static success(message: ReactNode) {
     notification.open({
-      message: "Thông báo",
+      message: "Notification",
       description: message,
       icon: <CheckCircleFilled style={{ color: "#52c41a" }} />,
       duration: 5,
@@ -14,7 +14,7 @@ class NotifyUtils {
 
   static error(message: ReactNode) {
     notification.open({
-      message: "Thông báo",
+      message: "Notification",
       description: message,
       icon: <CloseCircleFilled style={{ color: "#ff4d4f" }} />,
       duration: 5,
@@ -23,7 +23,7 @@ class NotifyUtils {
 
   static info(message: ReactNode) {
     notification.open({
-      message: "Thông báo",
+      message: "Notification",
       description: message,
       duration: 5,
     });

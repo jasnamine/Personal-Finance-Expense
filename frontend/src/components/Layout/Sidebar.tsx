@@ -18,9 +18,9 @@ const rawItems = [
     icon: <AppstoreOutlined size={18} />,
     label: "Dashboard",
   },
-  { key: "/category", icon: <TagsOutlined size={18} />, label: "Danh mục" },
-  { key: "/personal", icon: <UserOutlined size={18} />, label: "Cá nhân" },
-  { key: "/group", icon: <TeamOutlined size={18} />, label: "Nhóm" },
+  { key: "/category", icon: <TagsOutlined size={18} />, label: "Categories" },
+  { key: "/personal", icon: <UserOutlined size={18} />, label: "Personal" },
+  { key: "/group", icon: <TeamOutlined size={18} />, label: "Group" },
 ];
 
 const AppSidebar = () => {
@@ -64,7 +64,6 @@ const AppSidebar = () => {
         />
       </div>
 
-      {/* Menu */}
       <Menu
         mode="inline"
         selectedKeys={[location.pathname]}

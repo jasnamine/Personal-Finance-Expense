@@ -16,9 +16,9 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import type { GroupResponse } from "../../models/Group";
+import { formatDate } from "../../utils/date";
 
 const { Text, Paragraph } = Typography;
 
@@ -29,11 +29,6 @@ interface GroupListProps {
 }
 
 const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
-  const formatDate = (date?: Date) => {
-    if (!date) return "N/A";
-    return dayjs(date).format("DD/MM/YYYY");
-  };
-
   const navigate = useNavigate();
 
   return (
@@ -52,7 +47,6 @@ const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
               },
             }}
           >
-            {/* Title and Badge */}
             <div className="flex justify-between items-start mb-2">
               <Text
                 strong
@@ -62,7 +56,7 @@ const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
                 {group.name}
               </Text>
               <Space size={4}>
-                <Tooltip title="Chỉnh sửa">
+                <Tooltip title="Edit Group">
                   <Button
                     type="text"
                     size="small"
@@ -71,15 +65,15 @@ const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
                   />
                 </Tooltip>
                 <Popconfirm
-                  title="Xóa nhóm"
-                  description="Bạn có chắc chắn muốn xóa nhóm này không?"
+                  title="Delete Group"
+                  description="Are you sure you want to delete this group? All shared expenses will be lost."
                   onConfirm={() => onDeleteGroup(group._id)}
                   onCancel={(e) => e?.stopPropagation()}
-                  okText="Xóa"
-                  cancelText="Hủy"
+                  okText="Delete"
+                  cancelText="Cancel"
                   okButtonProps={{ danger: true }}
                 >
-                  <Tooltip title="Xóa">
+                  <Tooltip title="Delete">
                     <Button
                       type="text"
                       size="small"
@@ -92,7 +86,6 @@ const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
               </Space>
             </div>
 
-            {/* Description */}
             <div className="mb-4">
               <Paragraph
                 type="secondary"
@@ -106,7 +99,6 @@ const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
               </Paragraph>
             </div>
 
-            {/* Date and Timeline */}
             <div className="flex items-center gap-2 text-[11px] text-gray-500 mb-4 bg-gray-50 p-2 rounded-lg">
               <CalendarOutlined style={{ color: "#1890ff" }} />
               <span>
@@ -114,7 +106,6 @@ const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
               </span>
             </div>
 
-            {/* Members Preview */}
             <div className="flex items-center gap-2 mb-6 justify-between">
               <Avatar.Group
                 size="small"
@@ -146,7 +137,7 @@ const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
                 </Text>
               )}
               <Badge
-                count={`${group.members.length} người`}
+                count={`${group.members.length} members`}
                 style={{
                   backgroundColor: "#f5f5f5",
                   color: "#595959",
@@ -156,7 +147,6 @@ const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
               />
             </div>
 
-            {/* Action */}
             <div className="mt-auto">
               <Button
                 block
@@ -165,7 +155,7 @@ const GroupList = ({ groups, onEditGroup, onDeleteGroup }: GroupListProps) => {
                 style={{ height: "36px" }}
                 onClick={() => navigate(`/group/group-detail/${group._id}`)}
               >
-                <span className="text-xs">Xem chi tiết</span>
+                <span className="text-sm">View Details</span>
                 <ArrowRightOutlined className="text-[10px]" />
               </Button>
             </div>

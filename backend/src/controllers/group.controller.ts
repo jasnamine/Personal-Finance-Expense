@@ -3,7 +3,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.middleware";
 import * as groupService from "../services/group.service";
 import { BadRequestException } from "../utils/appError";
 
-export const createGroup = asyncHandler(async (req: Request, res: Response) => {
+const createGroup = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
 
   if (!userId) {
@@ -13,39 +13,35 @@ export const createGroup = asyncHandler(async (req: Request, res: Response) => {
   res.status(201).json(response);
 });
 
-export const getUserGroups = asyncHandler(
-  async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+const getUserGroups = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
 
-    if (!userId) {
-      throw new BadRequestException("User ID is missing in request");
-    }
-    const response = await groupService.getUserGroups(userId);
-    res.status(200).json(response);
-  },
-);
+  if (!userId) {
+    throw new BadRequestException("User ID is missing in request");
+  }
+  const response = await groupService.getUserGroups(userId);
+  res.status(200).json(response);
+});
 
-export const getGroupById = asyncHandler(
-  async (req: Request, res: Response) => {
-    const id = Array.isArray(req.params?.groupId)
-      ? req.params.groupId[0]
-      : req.params?.groupId;
+const getGroupById = asyncHandler(async (req: Request, res: Response) => {
+  const id = Array.isArray(req.params?.groupId)
+    ? req.params.groupId[0]
+    : req.params?.groupId;
 
-    const userId = req.user?.id;
+  const userId = req.user?.id;
 
-    if (!userId) {
-      throw new BadRequestException("User ID is missing in request");
-    }
+  if (!userId) {
+    throw new BadRequestException("User ID is missing in request");
+  }
 
-    if (!id) {
-      throw new BadRequestException("Expense ID is missing in request");
-    }
-    const response = await groupService.getGroupById(userId, id);
-    res.status(200).json(response);
-  },
-);
+  if (!id) {
+    throw new BadRequestException("Expense ID is missing in request");
+  }
+  const response = await groupService.getGroupById(userId, id);
+  res.status(200).json(response);
+});
 
-export const deleteGroup = asyncHandler(async (req: Request, res: Response) => {
+const deleteGroup = asyncHandler(async (req: Request, res: Response) => {
   const id = Array.isArray(req.params?.groupId)
     ? req.params.groupId[0]
     : req.params?.groupId;
@@ -63,7 +59,7 @@ export const deleteGroup = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
-export const updateGroup = asyncHandler(async (req: Request, res: Response) => {
+const updateGroup = asyncHandler(async (req: Request, res: Response) => {
   const id = Array.isArray(req.params?.groupId)
     ? req.params.groupId[0]
     : req.params?.groupId;
@@ -82,3 +78,11 @@ export const updateGroup = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(200).json(response);
 });
+
+export default {
+  createGroup,
+  getUserGroups,
+  getGroupById,
+  deleteGroup,
+  updateGroup,
+};

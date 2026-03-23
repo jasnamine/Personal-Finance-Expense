@@ -18,8 +18,6 @@ const MemberBalanceCard = ({ balances, members, currency }: Props) => {
 
   return (
     <div className="flex flex-col gap-3">
-      {" "}
-      {/* Thêm gap để các card không dính nhau */}
       {balances?.map((b) => {
         const user = getUser(b.userId);
         const isPositive = b.balance > 0;
@@ -32,7 +30,6 @@ const MemberBalanceCard = ({ balances, members, currency }: Props) => {
             bodyStyle={{ padding: "12px 16px" }}
           >
             <div className="flex justify-between items-center w-full">
-              {/* BÊN TRÁI: Avatar và Thông tin người dùng */}
               <Space size="middle">
                 <Avatar
                   size={40}
@@ -46,29 +43,28 @@ const MemberBalanceCard = ({ balances, members, currency }: Props) => {
                   </Text>
                   <Text type="secondary" style={{ fontSize: "12px" }}>
                     {isZero
-                      ? "Đã thanh toán đủ"
+                      ? "Settled Up"
                       : isPositive
-                        ? "Được nhận lại"
-                        : "Cần phải trả"}
+                        ? "To be received"
+                        : "Owes"}
                   </Text>
                 </div>
               </Space>
 
-         
               <div className="text-right">
                 <Text
                   strong
                   style={{
                     fontSize: "16px",
                     color: isZero
-                      ? "#9ca3af" 
+                      ? "#9ca3af"
                       : isPositive
-                        ? "#16a34a" 
-                        : "#dc2626", 
+                        ? "#16a34a"
+                        : "#dc2626",
                   }}
                 >
                   {isZero
-                    ? "-"
+                    ? "Settled"
                     : `${isPositive ? "+" : "-"}${formatCurrency(Math.abs(b.balance), currency)}`}
                 </Text>
               </div>

@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Loại bỏ viền đen cho Cursor và các thành phần Bar Chart */
 .recharts-bar-cursor:focus,
 .recharts-rectangle:focus,
 .recharts-bar-rectangle:focus,
@@ -10,7 +9,6 @@
     outline: none !important;
 }
 
-/* Chặn luôn việc hiển thị outline trên toàn bộ các tag vẽ SVG */
 .recharts-wrapper svg * {
     outline: none !important;
 }

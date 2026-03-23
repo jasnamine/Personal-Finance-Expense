@@ -27,7 +27,7 @@ const AppModal = ({
       footer={
         isFooterVisible && [
           <Button key="cancel" size="large" onClick={onClose}>
-            Hủy
+            Cancel
           </Button>,
           <Button
             key="submit"

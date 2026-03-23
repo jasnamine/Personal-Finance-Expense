@@ -12,12 +12,25 @@ export const createGroupSchema = z.object({
 
 export const groupIdParamSchema = z.object({
   params: z.object({
-    id: z.string().min(1),
+    groupId: z.string(),
   }),
 });
 
 export const deleteGroupSchema = z.object({
   params: z.object({
-    id: z.string().min(1),
+    groupId: z.string(),
+  }),
+});
+
+export const updateGroupSchema = z.object({
+  params: z.object({
+    groupId: z.string(),
+  }),
+  body: z.object({
+    name: z.string().min(1).optional(),
+    description: z.string().optional(),
+    startDate: z.string().datetime().optional(),
+    endDate: z.string().datetime().optional(),
+    baseCurrency: z.string().optional(),
   }),
 });

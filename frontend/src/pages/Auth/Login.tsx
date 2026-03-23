@@ -1,7 +1,7 @@
-import { GoogleOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
+import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Card, Divider, Typography } from "antd";
+import { Card, Typography } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
@@ -13,13 +13,16 @@ import InputError from "../../components/Input/InputError";
 import ResourceURL from "../../constants/ResourceURL";
 import NotifyUtils from "../../lib/NotifyUtils";
 import type { LoginRequest, LoginResponse } from "../../models/Authetication";
-import {useAuthStore} from "../../stores/authStore"
+import { useAuthStore } from "../../stores/authStore";
 
 const { Title, Text } = Typography;
 
 const loginSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
-  password: z.string().min(6, "Tối thiểu 6 ký tự"),
+  email: z.string().email("Invalid email format"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters long")
+    .regex(/[0-9]/, "Password must contain at least one number"),
 });
 
 const Login = () => {
@@ -42,14 +45,14 @@ const Login = () => {
         accessToken: data.data.accessToken,
         isAuthenticated: true,
       });
-      NotifyUtils.success("Đăng nhập thành công! Chuyển đến trang chủ...");
+      NotifyUtils.success("Login successful! Redirecting to dashboard");
       setTimeout(() => {
         navigate("/");
       }, 1500);
     },
     onError: (err: any) => {
       NotifyUtils.error(
-        err.response.data.message || "Đăng nhập thất bại! Vui lòng thử lại.",
+        err.response.data.message || "Login failed! Please try again.",
       );
     },
   });
@@ -110,20 +113,12 @@ const Login = () => {
           <InputError error={form.formState.errors.password?.message} />
 
           <AppButton type="primary" htmlType="submit" block>
-            Đăng nhập
+            Sign In
           </AppButton>
 
           <div style={{ textAlign: "center", marginTop: 16 }}>
-            Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+            Don't have an account? <Link to="/register">Sign up now</Link>
           </div>
-
-          <Divider plain style={{ color: "#8c8c8c", fontSize: "12px" }}>
-            Hoặc đăng nhập với
-          </Divider>
-
-          <AppButton icon={<GoogleOutlined />} size="large" block>
-            Tiếp tục với Google
-          </AppButton>
         </form>
       </Card>
     </div>

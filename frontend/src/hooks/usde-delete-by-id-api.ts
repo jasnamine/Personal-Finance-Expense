@@ -11,14 +11,14 @@ const useDeleteByIdApi = (resourceURL: string, resourceKey: string) => {
       privateApi.deleteById(resourceURL, entityId),
 
     onSuccess: () => {
-      NotifyUtils.success("Xóa thành công");
+      NotifyUtils.success("Delete successfully");
       void queryClient.invalidateQueries({
         queryKey: [resourceKey, "getAll"],
       });
     },
 
     onError: (err) => {
-      NotifyUtils.error(err?.message || "Xóa không thành công");
+      NotifyUtils.error(err?.message || "Delete failed");
     },
   });
 };

@@ -5,7 +5,7 @@ import { Controller, useWatch, type UseFormReturn } from "react-hook-form";
 import InputError from "../../components/Input/InputError";
 import ReceiptUpload from "../../components/Upload/ReceiptUpload";
 import type { GroupExpenseRequest, GroupMember } from "../../models/Group";
-import SplitMoneySection from "./SplitMoneySection";
+import SplitMoneySection from "../../pages/Group/SplitMoneySection";
 
 interface Props {
   form: UseFormReturn<GroupExpenseRequest>;
@@ -54,34 +54,33 @@ const ExpenseGroupForm = ({ form, members }: Props) => {
 
   return (
     <form className="space-y-4">
-      <label className="block mb-1 font-medium">Mô tả</label>
+      <label className="block mb-1 font-medium">Description</label>
       <Controller
         name="description"
         control={form.control}
-        rules={{ required: "Nhập mô tả" }}
         render={({ field }) => (
-          <Input {...field} placeholder="Mô tả chi tiêu" />
+          <Input {...field} placeholder="e.g. Group dinner, Taxi fare..." />
         )}
       />
       <InputError error={form.formState.errors.description?.message} />
 
-      <label className="block mb-1 mt-2 font-medium">Tổng số tiền</label>
+      <label className="block mb-1 mt-2 font-medium">Total Amount</label>
       <Controller
         name="amount"
         control={form.control}
-        rules={{ required: "Nhập số tiền" }}
+        rules={{ required: "Amount is required" }}
         render={({ field }) => (
           <InputNumber
             {...field}
             style={{ width: "100%" }}
             className="w-full"
-            placeholder="Nhập số tiền"
+            placeholder="0.00"
           />
         )}
       />
       <InputError error={form.formState.errors.amount?.message} />
 
-      <label className="block mb-1 mt-2 font-medium ">Người trả</label>
+      <label className="block mb-1 mt-2 font-medium ">Paid By</label>
       <Controller
         name="paidBy"
         control={form.control}
@@ -89,7 +88,7 @@ const ExpenseGroupForm = ({ form, members }: Props) => {
           <Select
             {...field}
             className="w-full"
-            placeholder="Người trả"
+            placeholder="Who paid?"
             options={members.map((m) => ({
               value: m.userId,
               label: m.email,
@@ -99,13 +98,14 @@ const ExpenseGroupForm = ({ form, members }: Props) => {
       />
       <InputError error={form.formState.errors.paidBy?.message} />
 
-      <label className="block mb-1 mt-2 font-medium ">Ngày trả</label>
+      <label className="block mb-1 mt-2 font-medium ">Date</label>
       <Controller
         name="date"
         control={form.control}
         render={({ field }) => (
           <DatePicker
             className="w-full"
+            placeholder="Select date"
             value={field.value ? dayjs(field.value) : null}
             onChange={(d) => field.onChange(d?.toDate())}
           />
@@ -113,16 +113,14 @@ const ExpenseGroupForm = ({ form, members }: Props) => {
       />
       <InputError error={form.formState.errors.date?.message} />
 
-      <label className="block mb-1 mt-2 font-medium ">
-        Phương thức chia tiền
-      </label>
+      <label className="block mb-1 mt-2 font-medium ">Split Method</label>
       <Controller
         name="splitType"
         control={form.control}
         render={({ field }) => (
           <Radio.Group {...field}>
-            <Radio value="EQUAL">Chia đều</Radio>
-            <Radio value="EXACT">Số tiền cụ thể</Radio>
+            <Radio value="EQUAL">Equally</Radio>
+            <Radio value="EXACT">Exact Amounts</Radio>
           </Radio.Group>
         )}
       />
@@ -130,7 +128,7 @@ const ExpenseGroupForm = ({ form, members }: Props) => {
       <SplitMoneySection form={form} members={members} />
       <InputError error={form.formState.errors.splits?.message} />
 
-      <label className="block mb-1 mt-4 font-medium">Hóa đơn</label>
+      <label className="block mb-1 mt-4 font-medium">Receipt Image</label>
       <ReceiptUpload form={form} name="receiptUrl" />
     </form>
   );

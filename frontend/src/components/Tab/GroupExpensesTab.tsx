@@ -14,10 +14,12 @@ import type {
   GroupExpenseResponse,
   GroupMember,
 } from "../../models/Group";
-import ExpenseGroupForm from "../../pages/Group/ExpenseGroupForm";
+import ExpenseGroupForm from "../../components/Form/ExpenseGroupForm";
 import AppCard from "../Card/AppCard";
-import ExpenseList from "../Lists/ExpenseGroupList";
+import ExpenseList from "../List/ExpenseGroupList";
 import AppModal from "../Modal/AppModal";
+import { useAuthStore } from "../../stores/authStore";
+import type { GroupRole } from "../../types";
 
 interface Props {
   expenses: GroupExpenseResponse[];
@@ -27,20 +29,20 @@ interface Props {
 
 export const splitSchema = z.object({
   userId: z.string(),
-  value: z.number().min(0, "Số tiền phải lớn hơn hoặc bằng 0"),
+  value: z.number().min(0, "Amount must be greater than or equal to 0"),
   splitType: z.enum(["EQUAL", "EXACT"], {
-    message: "Chọn phương thức chia tiền",
+    message: "Select a split method",
   }),
 });
 
 export const groupExpenseSchema = z
   .object({
     description: z.string().optional(),
-    amount: z.number().min(1, "Số tiền phải lớn hơn 0"),
-    paidBy: z.string().min(1, "Chọn người trả tiền"),
-    date: z.date(),
+    amount: z.number().min(1, "Amount must be greater than 0"),
+    paidBy: z.string().min(1, "Select who paid"),
+    date: z.date("Select date"),
     splitType: z.enum(["EQUAL", "EXACT"], {
-      message: "Chọn phương thức chia tiền",
+      message: "Select a split method",
     }),
     splits: z.array(splitSchema),
   })
@@ -52,7 +54,7 @@ export const groupExpenseSchema = z
         ctx.addIssue({
           code: "custom",
           path: ["splits"],
-          message: "Tổng tiền chia phải bằng tổng tiền",
+          message: "Total split amount must equal the total expense amount",
         });
       }
     }
@@ -71,10 +73,13 @@ const GroupExpensesTab = ({ expenses, currency, members }: Props) => {
       amount: 0,
       splitType: "EQUAL",
       paidBy: "",
-      date: new Date(),
+      date: undefined,
       splits: [],
     },
   });
+
+    const { user } = useAuthStore();
+    const currentUserRole = members.find((m) => m.userId === user?.id)?.role as GroupRole;
 
   const createApi = useCreateApi<GroupExpenseRequest, GroupExpenseResponse>(
     ResourceURL.EXPENSE_GROUP,
@@ -219,14 +224,15 @@ const GroupExpensesTab = ({ expenses, currency, members }: Props) => {
   };
   return (
     <AppCard
-      title="Danh sách chi tiêu"
+      title="Expense History"
+      role={currentUserRole}
       onClick={() => {
         setEditingExpense(null);
         form.reset({
           description: "",
           amount: 0,
           paidBy: "",
-          date: new Date(),
+          date: undefined,
           splitType: "EQUAL",
           splits: [],
         });
@@ -235,9 +241,7 @@ const GroupExpensesTab = ({ expenses, currency, members }: Props) => {
     >
       <div className="flex justify-between mb-6">
         <AppModal
-          title={
-            editingExpense ? "Cập nhật chi tiêu nhóm" : "Thêm chi tiêu nhóm"
-          }
+          title={editingExpense ? "Update Group Expense" : "Add Group Expense"}
           isOpen={isModalOpen}
           onSubmit={form.handleSubmit(handleSubmit)}
           onClose={() => setIsModalOpen(false)}
@@ -249,6 +253,7 @@ const GroupExpensesTab = ({ expenses, currency, members }: Props) => {
           <ExpenseList
             expenses={expenses}
             currency={currency}
+            members={members}
             onEditGroupExpense={handleUpdateGroupExpense}
             onDeleteGroupExpense={handleDeleteGroupExpense}
           />

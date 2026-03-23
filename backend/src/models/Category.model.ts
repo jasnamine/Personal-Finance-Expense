@@ -3,7 +3,7 @@ import { TRANSACTION_TYPE, TransactionType } from "../enums/TransactionType.enum
 
 export interface ICategory extends Document {
   name: string;
-  type: TransactionType; // dùng type từ enum
+  type: TransactionType; 
   icon?: string;
   userId: Types.ObjectId;
 }
@@ -12,7 +12,7 @@ const categorySchema = new Schema<ICategory>({
   name: { type: String, required: true },
   type: {
     type: String,
-    enum: Object.values(TRANSACTION_TYPE), // dùng Object.values để lấy mảng ['INCOME', 'EXPENSE']
+    enum: Object.values(TRANSACTION_TYPE), 
     required: true,
   },
   icon: { type: String },

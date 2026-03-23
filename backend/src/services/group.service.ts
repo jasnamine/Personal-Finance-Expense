@@ -38,15 +38,12 @@ const getUserGroups = async (userId: string) => {
     })
     .lean();
 
-  // Lấy danh sách groupId để query members
   const groupIds = userMemberships.map((m) => m.groupId._id);
 
-  // Lấy tất cả members của các group này
   const allMembers = await GroupMember.find({ groupId: { $in: groupIds } })
     .populate("userId", "name email")
     .lean();
 
-  // Group members theo groupId
   const membersByGroup = allMembers.reduce(
     (acc: Record<string, any[]>, m: any) => {
       const groupIdStr = m.groupId.toString();
@@ -63,7 +60,6 @@ const getUserGroups = async (userId: string) => {
     {},
   );
 
-  // Map lại để trả về groups kèm members
   const groups = userMemberships.map((membership: any) => {
     const group = membership.groupId;
     const groupIdStr = group._id.toString();
@@ -77,8 +73,8 @@ const getUserGroups = async (userId: string) => {
       baseCurrency: group.baseCurrency,
       ownerId: group.ownerId,
       createdAt: group.createdAt,
-      role: membership.role, // role của current user
-      members: membersByGroup[groupIdStr] || [], // list members
+      role: membership.role,
+      members: membersByGroup[groupIdStr] || [],
     };
   });
 
@@ -89,20 +85,18 @@ const getUserGroups = async (userId: string) => {
 };
 
 const getGroupById = async (userId: string, groupId: string) => {
-  // 1. Kiểm tra user có trong group không
   const currentMember = await GroupMember.findOne({ userId, groupId }).populate(
     "groupId",
   );
 
   if (!currentMember) {
     throw new ForbiddenException(
-      "Bạn không phải thành viên của group này hoặc group không tồn tại",
+      "You are not a member of this group or the group does not exist",
     );
   }
 
   const group = currentMember.groupId as any;
 
-  // 2. Lấy tất cả thành viên của group
   const members = await GroupMember.find({ groupId })
     .populate("userId", "name email")
     .lean();
@@ -115,7 +109,6 @@ const getGroupById = async (userId: string, groupId: string) => {
     joinedAt: m.joinedAt,
   }));
 
-  // 3. Lấy tất cả giao dịch trong group
   const expenses = await ExpenseModel.find({ groupId })
     .populate("paidBy", "email")
     .populate("createdBy", "email")
@@ -142,7 +135,6 @@ const getGroupById = async (userId: string, groupId: string) => {
     updatedAt: e.updatedAt,
   }));
 
-  // 4. Tính tổng tiền đã chi (totalExpense) theo baseCurrency
   const totalExpenseResult = await ExpenseModel.aggregate([
     { $match: { groupId: new Types.ObjectId(groupId) } },
     {
@@ -197,22 +189,18 @@ const updateGroup = async (
   groupId: string,
   updateData: Partial<IGroup>,
 ) => {
-  // 1. Kiểm tra quyền hạn: Chỉ Owner mới được update group
   const member = await GroupMember.findOne({ userId, groupId });
 
   if (!member) {
-    throw new NotFoundException(
-      "Không tìm thấy thông tin thành viên trong nhóm",
-    );
+    throw new NotFoundException("Member information not found in this group");
   }
 
   if (member.role !== GROUP_ROLE.OWNER) {
     throw new ForbiddenException(
-      "Chỉ chủ sở hữu nhóm mới có quyền chỉnh sửa thông tin",
+      "Only the group owner has the right to edit information",
     );
   }
 
-  // 2. Lọc các field cho phép update để tránh ghi đè dữ liệu quan trọng (như ownerId)
   const { name, description, startDate, endDate, baseCurrency } = updateData;
 
   const updatePayload: any = {};
@@ -222,23 +210,20 @@ const updateGroup = async (
   if (endDate !== undefined) updatePayload.endDate = new Date(endDate);
   if (baseCurrency !== undefined) updatePayload.baseCurrency = baseCurrency;
 
-  // 3. Thực hiện update
   const updatedGroup = await Group.findByIdAndUpdate(
     groupId,
     { $set: updatePayload },
-    { new: true, runValidators: true }, // new: true để trả về object sau khi đã update
+    { new: true, runValidators: true },
   );
 
   if (!updatedGroup) {
-    throw new NotFoundException("Nhóm không tồn tại");
+    throw new NotFoundException("Group does not exist");
   }
 
   return {
-    message: "Cập nhật thông tin nhóm thành công",
+    message: "Group information updated successfully",
     data: updatedGroup,
   };
 };
 
 export { createGroup, deleteGroup, getGroupById, getUserGroups, updateGroup };
-
-

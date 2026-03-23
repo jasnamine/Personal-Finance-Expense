@@ -2,12 +2,13 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware";
 import * as groupMemberService from "../services/groupMember.service";
 import { io } from "../socket";
+import { BadRequestException } from "../utils/appError";
 
 const getMembersByGroupId = asyncHandler(
   async (req: Request, res: Response) => {
     const { groupId } = req.params as { groupId: string };
     if (!groupId) {
-      return res.status(400).json({ message: "Group ID is required" });
+      throw new BadRequestException("Group ID is missing in request");
     }
     const response = await groupMemberService.getMembersByGroupId(groupId);
     return res.status(200).json(response);
@@ -46,11 +47,11 @@ const leaveGroup = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
 
   if (!groupId) {
-    return res.status(400).json({ message: "Group ID is required" });
+       throw new BadRequestException("Group ID is missing in request");
   }
 
   if (!userId) {
-    return res.status(401).json({ message: "User not authenticated" });
+      throw new BadRequestException("User ID is missing in request");
   }
 
   const response = await groupMemberService.leaveGroup(groupId, userId);
@@ -58,7 +59,6 @@ const leaveGroup = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(response);
 });
 
-// Thêm vào danh sách export
 export {
   addMember,
   deleteMember,
